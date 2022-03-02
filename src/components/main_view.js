@@ -3,6 +3,7 @@ import EmptyLog from "./empty_log";
 import SingleLog from "./single_log";
 import Button from "./Button";
 import Chore from "./chore";
+import NewTask from "./NewTask";
 
 export default class MainView extends Component {
   constructor(props) {
@@ -83,16 +84,6 @@ export default class MainView extends Component {
         })
     }
 
-    let newTask = this.state.addTask ? <tr>
-        <td/>
-        <td colSpan={2}><input type="text" id="chore-input" className="form-control"/></td>
-        <td>
-          <Button caption={"Legg til"} visible={false}
-                  classNames={"btn-sm btn-primary"}
-                  icon={"plus-circle"}
-                  completion={() => this.addTask()}/>
-        </td>
-      </tr> : null;
     let main = this.props.list === null
       ? null
       : <>
@@ -114,7 +105,7 @@ export default class MainView extends Component {
         />
         <table className={"table"}>
           <tbody>
-            { newTask }
+            { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
             { table }
           </tbody>
         </table>
