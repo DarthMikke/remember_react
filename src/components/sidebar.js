@@ -17,6 +17,7 @@ export default class Sidebar extends Component {
 
   addList() {
     this.props.addList(document.querySelector("#new_list").value);
+    this.toggleNewList();
   }
 
   render() {
