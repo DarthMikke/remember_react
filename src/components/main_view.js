@@ -4,11 +4,13 @@ import SingleLog from "./single_log";
 import Button from "./Button";
 import Chore from "./chore";
 import NewTask from "./NewTask";
+import TextFieldForm from "./TextFieldForm";
 
 export default class MainView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      editName: false,
       addTask: false,
       selectedChore: null,
       choreDetails: {logs: []},
@@ -19,6 +21,18 @@ export default class MainView extends Component {
     this.addTask = this.addTask.bind(this);
     this.logChore = this.logChore.bind(this);
     this.choreDetails = this.choreDetails.bind(this);
+    this.toggleEditing = this.toggleEditing.bind(this);
+    this.updateName = this.updateName.bind(this);
+  }
+
+  toggleEditing() {
+    this.setState({editName: !this.state.editName});
+  }
+
+  updateName(name) {
+    console.log(name);
+    this.props.updateName(name);
+    this.toggleEditing();
   }
 
   addTask() {
@@ -87,18 +101,22 @@ export default class MainView extends Component {
     let main = this.props.list === null
       ? null
       : <>
-        <h3>{ this.props.list.name }</h3>
-        <Button
+        { !this.state.editName ?
+          <h3>{ this.props.list.name }</h3> :
+          <TextFieldForm value={this.props.list.name} completion={(name) => {this.updateName(name)}}
+                         id={"list-name"} caption={"Lagre"}
+          /> }
+        <Button key={"new-chore"}
           icon={"plus-circle"} caption={"Ny oppgåve"}
           completion={() => this.toggleNewTask()}
           classNames={"btn-primary"}
           />
-        <Button
+        <Button key={"edit-list"}
           icon={"pencil"} caption={"Rediger"}
-          completion={() => {}}
+          completion={() => {this.toggleEditing()}}
           classNames={"btn-primary"}
         />
-        <Button
+        <Button key={"delete-list"}
           icon={"trash3"} caption={"Slett lista"}
           completion={() => {}}
           classNames={"btn-danger"}
