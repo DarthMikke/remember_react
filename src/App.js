@@ -18,11 +18,11 @@ class App extends Component {
       token: token === undefined || token === "" ? null : token,
       username: username === undefined ? null : username,
       lists: [],
-      selected_list_id: null,
+      selected_list: null,
     }
 
     this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : "https://millim.no"
-    this.API = new API(this.base_url, getCookie('csrftoken'), token);
+    this.API = null;
 
     this.csrftoken = getCookie('csrftoken')
 
@@ -41,19 +41,15 @@ class App extends Component {
   }
 
   async selectList(pk) {
-    let index = this.state.lists.find(x => x.id === pk);
-    let lists = this.state.lists;
-    lists[index].items = await this.getList(pk);
-    this.setState({selected_list_id: pk, lists: lists});
+    let checklist = await this.getList(pk);
+    console.log(checklist);
+    this.setState({ selected_list: checklist });
   }
 
+  // API calls
   async getLists() {
     if (this.state.token === null) return;
-
-    let response = await fetch(
-      `${this.base_url}/chores/api/checklists/`,
-      {headers: {'x-csrftoken': this.csrftoken, 'token': this.state.token} }
-    );
+    let response = await this.API.get('chores/api/checklists/');
     let json = await response.json();
     console.log(json);
     if (response.status === 200) {
@@ -65,23 +61,22 @@ class App extends Component {
   }
 
   async addList(name) {
-    let formData = new FormData();
-    formData.append('name', name);
-
-    let response = await fetch(
-      `${this.base_url}/chores/api/checklist/add`,
-      {
-        method: 'post',
-        headers: {'x-csrftoken': this.csrftoken, 'token': this.state.token},
-        body: formData,
-      }
-    );
+    let response = await this.API.post('chores/api/checklist/add', {}, {'name': name});
     let json = await response.json();
-    this.getLists();
+    if (response.status === 200) {
+      this.getLists();
+      return;
+    }
   }
 
   async getList(pk) {
-
+    let response = await this.API.get(`chores/api/checklist/${pk}/`);
+    let json = await response.json();
+    console.log(json);
+    if (response.status === 200) {
+      return json;
+    }
+    return json;
   }
 
   updateList(pk, name) {
@@ -92,36 +87,51 @@ class App extends Component {
 
   }
 
-  getChore(pk) {
-
+  async getChore(pk) {
+    console.log(`Getting details on chore ${pk}`);
+    let response = await this.API.get(`chores/api/chore/${pk}/`);
+    let json = await response.json();
+    if (response.status === 200) {
+      return json;
+    }
+    return json;
   }
 
-  addChore(name) {
-
+  async addChore(name, checklist_pk) {
+    console.log(`Adding ${name} to checklist ${checklist_pk}...`);
+    this.API.post(`chores/api/checklist/${checklist_pk}/add_chore`, {}, {name: name});
+    await this.selectList(this.state.selected_list.id);
   }
 
   updateChore(pk, name, checklist) {
 
   }
 
-  logChore(pk, date=null) {
-
+  async logChore(pk, date=null) {
+    if (date === null) {
+      date = new Date();
+    }
+    console.log(`Logging chore ${pk} at ${date.toUTCString()}...`);
+    await this.API.get(`chores/api/chore/${pk}/log`);
+    await this.selectList(this.state.selected_list.id);
   }
 
   deleteChore(pk) {
 
   }
 
+  // React methods
   componentDidMount() {
     if (this.state.token === null) {
       return;
     }
+    this.API = new API(this.base_url, getCookie('csrftoken'), this.state.token);
     this.login(this.state.username, this.state.token);
     this.getLists();
   }
 
   render() {
-    let main_view_list = this.state.selected_list_id === null
+    let main_view_list = this.state.selected_list === null
       ? null
       : this.state.lists.filter(x => x.id === this.state.selected_list_id)[0];
     return <>
@@ -135,9 +145,13 @@ class App extends Component {
           : <>
             <Sidebar
               lists={this.state.lists}
-              select={(x) => this.selectList(x)}
-              addList={(x) => this.addList(x)}/>
-            <MainView list={main_view_list}/>
+              select={(pk) => this.selectList(pk)}
+              addList={(name) => this.addList(name)}/>
+            <MainView
+              addTask={(name) => this.addChore(name, this.state.selected_list.id)}
+              getChore={(pk) => this.getChore(pk)}
+              logChore={(pk, dtg) => this.logChore(pk, dtg)}
+              list={this.state.selected_list}/>
           </> }
         </div>
     </>;
