@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import EmptyLog from "./empty_log";
 import SingleLog from "./single_log";
 import Button from "./Button";
+import Chore from "./chore";
 
 export default class MainView extends Component {
   constructor(props) {
@@ -17,38 +18,6 @@ export default class MainView extends Component {
     this.addTask = this.addTask.bind(this);
     this.logChore = this.logChore.bind(this);
     this.choreDetails = this.choreDetails.bind(this);
-  }
-
-  /*
-   * @param {Date|string} from
-   * @param {Date} to
-   * @returns {number}
-   * */
-  daysSince(from, to=new Date()) {
-    let day = 24*3600*1000;
-    if (typeof(from) === "string") {
-      from = new Date(from);
-    }
-    let from_day = from.getTime() - from.getTime()%(day)
-    let to_day = to.getTime() - to.getTime()%(day)
-    let diff = to_day - from_day;
-    return Math.floor(diff/(day));
-  }
-
-  /**
-   * @param {Date|string} from
-   * @param {Date} to
-   * @returns {string}
-   * */
-  verboseDaysSince(from, to) {
-    let days = this.daysSince(from, to);
-    if (days === 0) {
-      return "i dag";
-    }
-    else if (days === 1) {
-      return "i går";
-    }
-    return `${days} d. sidan`;
   }
 
   addTask() {
@@ -103,70 +72,46 @@ export default class MainView extends Component {
             );
           }
         }
-        let chore = <tr key={`chore_${x.id}`}>
-          <td><Button classNames={"btn-sm btn-primary"}
-                    icon={"check-circle"}
-                    caption={"Logg"} visible={false}
-                    completion={() => this.logChore(x.id)}
-            /></td>
-          <td>{x.name}</td>
-          <td>{x.last_logged === null
-            ? <i>Enno ikkje loggført</i>
-            : this.verboseDaysSince(x.last_logged)}</td>
-          <td>
-            <Button classNames={"btn-sm btn-primary"}
-              icon={"search"}
-              caption={"Detaljar"} visible={false}
-              completion={() => this.choreDetails(x.id)}
-            />
-            <Button classNames={"btn-sm btn-danger"}
-                    icon={"trash3"}
-                    caption={"Slett"} visible={false}
-                    completion={() => this.choreDetails(x.id)}
-            />
-          </td>
-        </tr>;
-          return <>
-            {chore}
-            {details}
-          </>
+        return <>
+          <Chore chore={x} logCompletion={() => this.logChore(x.id)}
+                 detailsCompletion={() => this.choreDetails(x.id)}
+                 deleteCompletion={() => {}}
+                 editCompletion={() => {}}
+          />
+          {details}
+        </>
         })
     }
 
     let newTask = this.state.addTask ? <tr>
         <td/>
-        <td><input type="text" id="chore-input" className="form-control"/></td>
+        <td colSpan={2}><input type="text" id="chore-input" className="form-control"/></td>
         <td>
-          <a
-            href={"#"}
-            onClick={() => this.addTask()}
-            className="btn btn-sm btn-primary">
-            <i className="bi bi-plus-circle"/>
-          </a>
+          <Button caption={"Legg til"} visible={false}
+                  classNames={"btn-sm btn-primary"}
+                  icon={"plus-circle"}
+                  completion={() => this.addTask()}/>
         </td>
       </tr> : null;
     let main = this.props.list === null
       ? null
       : <>
         <h3>{ this.props.list.name }</h3>
-        <a
-          href={"#"}
-          onClick={() => this.toggleNewTask()}
-          className={"btn btn-sm btn-primary ms-1"}>
-          <i className="bi bi-plus-circle"/> Ny oppgåve
-        </a>
-        <a
-          href={"#"}
-          onClick={() => {}}
-          className={"btn btn-sm btn-primary ms-1"}>
-          <i className="bi bi-pencil"/> Rediger
-        </a>
-        <a
-          href={"#"}
-          onClick={() => {}}
-          className={"btn btn-sm btn-danger ms-1"}>
-          <i className="bi bi-trash3"/> Slett lista
-        </a>
+        <Button
+          icon={"plus-circle"} caption={"Ny oppgåve"}
+          completion={() => this.toggleNewTask()}
+          classNames={"btn-primary"}
+          />
+        <Button
+          icon={"pencil"} caption={"Rediger"}
+          completion={() => {}}
+          classNames={"btn-primary"}
+        />
+        <Button
+          icon={"trash3"} caption={"Slett lista"}
+          completion={() => {}}
+          classNames={"btn-danger"}
+        />
         <table className={"table"}>
           <tbody>
             { newTask }
