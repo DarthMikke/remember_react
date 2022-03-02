@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import EmptyLog from "./empty_log";
+import SingleLog from "./single_log";
+import Button from "./Button";
 
 export default class MainView extends Component {
   constructor(props) {
@@ -48,22 +51,6 @@ export default class MainView extends Component {
     return `${days} d. sidan`;
   }
 
-  /**
-   * @param {Date|string} date
-   * @returns {string}
-   */
-  formatDate(date) {
-    if (typeof(date) === 'string') {
-      date = new Date(date);
-    }
-    let year = date.getFullYear();
-    let month = date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
-    let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-    let hours = date.getHours();
-    let minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-    return `${day}.${month}.${year} ${hours}.${minutes}`;
-  }
-
   addTask() {
     let taskName = document.querySelector("#chore-input").value;
     this.props.addTask(taskName);
@@ -108,59 +95,35 @@ export default class MainView extends Component {
         let details = null;
         if(this.state.selectedChore === x.id) {
           if (this.state.choreDetails.logs.length === 0) {
-            details = <tr key={`chore_${x.id}_details`}>
-              <td/>
-              <td colSpan={2}><i>Denne oppgåva har ikkje vorte loggført enno.</i></td>
-              <td/>
-            </tr>
+            details = <EmptyLog/>
           } else {
             console.log(this.state.choreDetails);
-            details = this.state.choreDetails.logs.map(y => <tr key={`chore_${x.id}_details_${y.id}`}>
-              <td/>
-              <td>{y.note}</td>
-              <td>{this.formatDate(y.timestamp)}</td>
-              <td>
-                <a
-                  href={"#"}
-                  className={"btn btn-sm btn-danger"}
-                >
-                  <i className={"bi bi-trash3"}/>
-                  <span className={"visually-hidden"}>Slett</span>
-                </a>
-              </td>
-            </tr>);
+            details = this.state.choreDetails.logs.map(y =>
+              <SingleLog chore_id={x.id} log={y}/>
+            );
           }
         }
         let chore = <tr key={`chore_${x.id}`}>
-          <td>
-            <a
-              href={"#"}
-              className="btn btn-sm btn-primary"
-              onClick={() => this.logChore(x.id)}
-            >
-              <i className="bi bi-check-circle"/>
-              <span className={"visually-hidden visually-hidden-focusable"}>Logg</span>
-            </a></td>
+          <td><Button classNames={"btn-sm btn-primary"}
+                    icon={"check-circle"}
+                    caption={"Logg"} visible={false}
+                    completion={() => this.logChore(x.id)}
+            /></td>
           <td>{x.name}</td>
           <td>{x.last_logged === null
             ? <i>Enno ikkje loggført</i>
             : this.verboseDaysSince(x.last_logged)}</td>
           <td>
-            <a
-              href={"#"}
-              className="btn btn-sm btn-primary"
-              onClick={() => this.choreDetails(x.id)}
-            >
-              <i className="bi bi-search"/>
-              <span className={"visually-hidden visually-hidden-focusable"}>Detaljar</span>
-            </a>
-            <a
-              href={"#"}
-              className="ms-1 btn btn-sm btn-danger"
-            >
-              <i className="bi bi-trash3"/>
-              <span className={"visually-hidden visually-hidden-focusable"}>Slett</span>
-            </a>
+            <Button classNames={"btn-sm btn-primary"}
+              icon={"search"}
+              caption={"Detaljar"} visible={false}
+              completion={() => this.choreDetails(x.id)}
+            />
+            <Button classNames={"btn-sm btn-danger"}
+                    icon={"trash3"}
+                    caption={"Slett"} visible={false}
+                    completion={() => this.choreDetails(x.id)}
+            />
           </td>
         </tr>;
           return <>
