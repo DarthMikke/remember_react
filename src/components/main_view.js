@@ -74,10 +74,11 @@ export default class MainView extends Component {
   }
 
   render() {
-    let noListSelected = this.props.list === null ? "Du har ikkje valt noka liste" : null;
-    let table = null;
-    if (this.props.list !== null) {
-      table = this.props.list.items.length === 0
+    if (this.props.list === null) {
+      return <div className="col-md-9 col-lg-10">Du har ikkje valt noka liste</div>;
+    }
+    
+    let table = this.props.list.items.length === 0
       ? <span>Her er det ingen oppgåver. Prøv å leggje til ei.</span>
       : this.props.list.items.map(x => {
         let details = null;
@@ -100,39 +101,34 @@ export default class MainView extends Component {
           {details}
         </>
         })
-    }
 
-    let main = this.props.list === null
-      ? null
-      : <>
-        { !this.state.editName ?
-          <h3>{ this.props.list.name }</h3> :
-          <TextFieldForm value={this.props.list.name} completion={(name) => {this.updateName(name)}}
+    return <div className="col-md-9 col-lg-10">
+      { !this.state.editName
+        ? <h3>{ this.props.list.name }</h3>
+        : <TextFieldForm value={this.props.list.name} completion={(name) => {this.updateName(name)}}
                          id={"list-name"} caption={"Lagre"}
           /> }
-        <Button key={"new-chore"}
-          icon={"plus-circle"} caption={"Ny oppgåve"}
-          completion={() => this.toggleNewTask()}
-          classNames={"btn-primary"}
-          />
-        <Button key={"edit-list"}
-          icon={"pencil"} caption={"Rediger"}
-          completion={() => {this.toggleEditing()}}
-          classNames={"btn-primary"}
-        />
-        <Button key={"delete-list"}
-          icon={"trash3"} caption={"Slett lista"}
-          completion={() => {this.props.deleteList()}}
-          classNames={"btn-danger"}
-        />
-        <table className={"table"}>
-          <tbody>
-            { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
-            { table }
-          </tbody>
-        </table>
-      </>;
-
-    return <div className="col-md-9 col-lg-10">{noListSelected} { main }</div>;
+      <Button key={"new-chore"}
+              icon={"plus-circle"} caption={"Ny oppgåve"}
+              completion={() => this.toggleNewTask()}
+              classNames={"btn-primary"}
+      />
+      <Button key={"edit-list"}
+              icon={"pencil"} caption={"Rediger"}
+              completion={() => {this.toggleEditing()}}
+              classNames={"btn-primary"}
+      />
+      <Button key={"delete-list"}
+              icon={"trash3"} caption={"Slett lista"}
+              completion={() => {this.props.deleteList()}}
+              classNames={"btn-danger"}
+      />
+      <table className={"table"}>
+        <tbody>
+        { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
+        { table }
+        </tbody>
+      </table>
+    </div>;
   }
 }
