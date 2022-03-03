@@ -1,4 +1,13 @@
 export default class API {
+  /**
+   *
+   * @param base_url {string}: First part of the URL, common for all endpoints. No trailing slash.
+   * Examples:
+   *   - http://localhost:8000/app_name
+   *   - https://public.url/api
+   * @param csrftoken {string}: Django's CSRF token
+   * @param token {string}: App's access token
+   */
   constructor(base_url, csrftoken, token) {
     this.base_url = base_url;
     this.csrf = csrftoken;
