@@ -46,11 +46,18 @@ function verboseDaysSince(from, to) {
  */
 export default function Chore(props) {
   return <tr key={`chore_${props.chore.id}`}>
-    <td><Button classNames={"btn-sm btn-primary"}
+    <td>
+      <Button classNames={"btn-sm btn-primary"}
                 icon={"check-circle"}
                 caption={"Logg"} visible={false}
                 completion={() => props.logCompletion()}
-    /></td>
+      />
+      <Button classNames={"btn-sm btn-primary"}
+              icon={"clock-history"}
+              caption={"Logg i fortida"} visible={false}
+              completion={() => props.logCompletion()}
+      />
+    </td>
     <td>{props.chore.name}</td>
     <td>{props.chore.last_logged === null
       ? <i>Enno ikkje loggført</i>
