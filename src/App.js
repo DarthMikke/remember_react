@@ -125,12 +125,12 @@ class App extends Component {
 
   }
 
-  async logChore(pk, date=null) {
+  async logChore(pk, note="", date=null) {
     if (date === null) {
       date = new Date();
     }
-    console.log(`Logging chore ${pk} at ${date.toUTCString()}...`);
-    await this.API.get(`chores/api/chore/${pk}/log`);
+    console.log(`Logging chore ${pk} with note ${note} at ${date.toJSON()}...`);
+    await this.API.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
     await this.selectList(this.state.selected_list.id);
   }
 
@@ -168,7 +168,7 @@ class App extends Component {
               deleteList={() => this.deleteList(this.state.selected_list.id)}
               addTask={(name) => this.addChore(name, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
-              logChore={(pk, dtg) => this.logChore(pk, dtg)}
+              logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteChore={pk => this.deleteChore(pk)}
               list={this.state.selected_list}/>
           </> }

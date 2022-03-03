@@ -15,7 +15,7 @@ export default class MainView extends Component {
       addTask: false,
       selectedChore: null,
       choreDetails: {logs: []},
-      extendedLogger: false,
+      extendedLogger: null,
     };
 
     this.toggleNewTask = this.toggleNewTask.bind(this);
@@ -46,12 +46,19 @@ export default class MainView extends Component {
     this.setState({addTask: !this.state.addTask});
   }
   
-  toggleExtendedLogger() {
-    this.setState({extendedLogger: !this.state.extendedLogger});
+  toggleExtendedLogger(pk) {
+    if (this.state.extendedLogger === pk) {
+      this.setState({extendedLogger: null});
+      return;
+    }
+    this.setState({extendedLogger: pk});
   }
 
-  logChore(pk, dtg=null) {
-    this.props.logChore(pk, dtg);
+  logChore(pk, note="", dtg=null) {
+    if (this.state.extendedLogger === pk) {
+      this.setState({extendedLogger: null})
+    }
+    this.props.logChore(pk, note, dtg);
   }
 
   deleteChore(pk) {
@@ -77,7 +84,7 @@ export default class MainView extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
   }
-
+ 
   render() {
     if (this.props.list === null) {
       return <div className="col-md-9 col-lg-10">Du har ikkje valt noka liste</div>;
@@ -97,16 +104,16 @@ export default class MainView extends Component {
             );
           }
         }
-        let extendedLogger = !this.state.extendedLogger
-          ? null
-          : <ExtendedLogger/>;
+        let extendedLogger = this.state.extendedLogger === x.id
+          ? <ExtendedLogger completion={(note, dtg) => this.logChore(x.id, note, dtg)}/>
+          : null;
         
         return <>
           <Chore chore={x} logCompletion={() => this.logChore(x.id)}
                  detailsCompletion={() => this.choreDetails(x.id)}
                  deleteCompletion={() => this.deleteChore(x.id)}
                  updateCompletion={() => {}}
-                 extendedLogCompletion={() => {}}
+                 extendedLogCompletion={() => this.toggleExtendedLogger(x.id)}
           />
           {extendedLogger}
           {details}
