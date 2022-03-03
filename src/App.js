@@ -165,6 +165,7 @@ class App extends Component {
               addTask={(name) => this.addChore(name, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
               logChore={(pk, dtg) => this.logChore(pk, dtg)}
+              deleteChore={pk => this.deleteChore(pk)}
               list={this.state.selected_list}/>
           </> }
         </div>

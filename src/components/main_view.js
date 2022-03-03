@@ -49,6 +49,10 @@ export default class MainView extends Component {
     this.props.logChore(pk, dtg);
   }
 
+  deleteChore(pk) {
+    this.props.deleteChore(pk);
+  }
+
   async choreDetails(pk) {
     if (this.state.selectedChore === pk) {
       this.setState({selectedChore: null});
@@ -90,8 +94,8 @@ export default class MainView extends Component {
         return <>
           <Chore chore={x} logCompletion={() => this.logChore(x.id)}
                  detailsCompletion={() => this.choreDetails(x.id)}
-                 deleteCompletion={() => {}}
-                 editCompletion={() => {}}
+                 deleteCompletion={() => this.deleteChore(x.id)}
+                 updateCompletion={() => {}}
           />
           {details}
         </>
