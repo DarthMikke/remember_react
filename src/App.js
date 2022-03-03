@@ -13,9 +13,10 @@ class App extends Component {
 
     let token = getCookie("token");
     let username = getCookie("username");
-
+    
+    console.log(`Found token ${token} for username ${username}.`);
     this.state = {
-      token: token === undefined || token === "" ? null : token,
+      token: (token === undefined || token === "") ? null : token,
       username: username === undefined ? null : username,
       lists: [],
       selected_list: null,
@@ -38,6 +39,8 @@ class App extends Component {
     setCookie('token', token, 30);
     this.setState({username: username, token: token});
     console.log(`Logged in as ${username}`);
+    this.API = new API(this.base_url, getCookie('csrftoken'), token);
+    this.getLists();
   }
 
   async selectList(pk) {
@@ -55,8 +58,11 @@ class App extends Component {
     if (response.status === 200) {
       this.setState({lists: json['checklists']});
       return;
+    } else if (response.status === 401) {
+      setCookie("token", "", -1);
+      setCookie("username", getCookie('username'), -1)
     } else {
-      setCookie("token", "", -1)
+      console.log(response.status);
     }
   }
 
@@ -133,13 +139,11 @@ class App extends Component {
   }
 
   // React methods
-  componentDidMount() {
+  async componentDidMount() {
     if (this.state.token === null) {
       return;
     }
-    this.API = new API(this.base_url, getCookie('csrftoken'), this.state.token);
     this.login(this.state.username, this.state.token);
-    this.getLists();
   }
 
   render() {
