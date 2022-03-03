@@ -118,7 +118,7 @@ export default class MainView extends Component {
         />
         <Button key={"delete-list"}
           icon={"trash3"} caption={"Slett lista"}
-          completion={() => {}}
+          completion={() => {this.props.deleteList()}}
           classNames={"btn-danger"}
         />
         <table className={"table"}>

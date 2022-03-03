@@ -85,11 +85,18 @@ class App extends Component {
     console.log(json);
     if (response.status === 200) {
       await this.selectList(pk);
+      await this.getLists();
     }
   }
 
-  deleteList(pk) {
-
+  async deleteList(pk) {
+    let response = await this.API.get(`chores/api/checklist/${pk}/delete`);
+    let json = await response.json();
+    console.log(json);
+    if (response.status === 200) {
+      this.setState({selected_list: null});
+      await this.getLists();
+    }
   }
 
   async getChore(pk) {
@@ -154,6 +161,7 @@ class App extends Component {
               addList={(name) => this.addList(name)}/>
             <MainView
               updateName={(name) => this.updateList(this.state.selected_list.id, name)}
+              deleteList={() => this.deleteList(this.state.selected_list.id)}
               addTask={(name) => this.addChore(name, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
               logChore={(pk, dtg) => this.logChore(pk, dtg)}
