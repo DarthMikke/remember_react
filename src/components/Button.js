@@ -21,7 +21,9 @@ export default function (props) {
   return <a
     href={"#"}
     onClick={() => props.completion()}
-    className={classes}>
+    className={classes}
+    title={props.caption}
+  >
     {icon} {caption}
   </a>
 }
