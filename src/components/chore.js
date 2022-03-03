@@ -1,7 +1,7 @@
 import Button from "./Button";
 import React from "react";
 
-/*
+/**
  * @param {Date|string} from
  * @param {Date} to
  * @returns {number}
@@ -55,7 +55,7 @@ export default function Chore(props) {
       <Button classNames={"btn-sm btn-primary"}
               icon={"clock-history"}
               caption={"Logg i fortida"} visible={false}
-              completion={() => props.logCompletion()}
+              completion={() => props.extendedLogCompletion()}
       />
     </td>
     <td>{props.chore.name}</td>

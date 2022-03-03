@@ -5,6 +5,7 @@ import Button from "./Button";
 import Chore from "./chore";
 import NewTask from "./NewTask";
 import TextFieldForm from "./TextFieldForm";
+import ExtendedLogger from "./ExtendedLogger";
 
 export default class MainView extends Component {
   constructor(props) {
@@ -43,6 +44,10 @@ export default class MainView extends Component {
 
   toggleNewTask() {
     this.setState({addTask: !this.state.addTask});
+  }
+  
+  toggleExtendedLogger() {
+    this.setState({extendedLogger: !this.state.extendedLogger});
   }
 
   logChore(pk, dtg=null) {
@@ -92,12 +97,18 @@ export default class MainView extends Component {
             );
           }
         }
+        let extendedLogger = !this.state.extendedLogger
+          ? null
+          : <ExtendedLogger/>;
+        
         return <>
           <Chore chore={x} logCompletion={() => this.logChore(x.id)}
                  detailsCompletion={() => this.choreDetails(x.id)}
                  deleteCompletion={() => this.deleteChore(x.id)}
                  updateCompletion={() => {}}
+                 extendedLogCompletion={() => {}}
           />
+          {extendedLogger}
           {details}
         </>
         })
