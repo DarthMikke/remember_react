@@ -4,16 +4,35 @@ import {parseDate} from "../date-utils";
 export default function ExtendedLogger(props) {
   let now = new Date();
   let year = now.getFullYear();
-  let month = now.getMonth() < 9 ? "0" + (now.getMonth() + 1) : now.getMonth() + 1;
+  let month = String(now.getMonth() < 9 + 1) ? "0" + (now.getMonth() + 1) : now.getMonth() + 1;
   let day = now.getDate() < 10 ? "0" + now.getDate() : now.getDate();
   let hours = now.getHours();
   let minutes = now.getMinutes() < 10 ? "0" + now.getMinutes() : now.getMinutes();
   const [date, setDate] = useState(day + "." + month + "." + year);
   const [time, setTime] = useState(hours + "." + minutes);
   const [note, setNote] = useState("")
+  const [invalidDt, setInvalidDt] = useState("");
+  
+  function validate() {
+    let dtg = parseDate(date + " " + time);
+    if (dtg===null) {
+      setInvalidDt("is-invalid");
+      return;
+    }
+    setInvalidDt("is-valid");
+  }
+  
+  useEffect(validate);
   
   function submit() {
     let dtg = parseDate(date + " " + time);
+    // Parse datetime
+    if (dtg===null) {
+      setInvalidDt("is-invalid");
+      return;
+    }
+    
+    console.log(`Parsed ${date} ${time} as ${dtg.toJSON()}`)
     props.completion(note, dtg);
   }
   
@@ -29,10 +48,12 @@ export default function ExtendedLogger(props) {
     <td>
       <div className={"input-group input-group-sm row"}>
         <span className="input-group-text col-2">Dato: </span>
-        <input className={"form-control col-3"} placeholder="dato" maxLength={10} type={"text"} id={"date"}
+        <input className={ (invalidDt) + " form-control col-3" }
+               placeholder="date" maxLength={10} type={"text"} id={"date"}
                value={date} onChange={(e) => setDate(e.target.value)}/>
         <span className="input-group-text col-2">Tid: </span>
-        <input className={"form-control col-3"} placeholder="time" maxLength={5} type={"text"} id={"time"}
+        <input className={ (invalidDt) + " form-control col-3" }
+               placeholder="time" maxLength={5} type={"text"} id={"time"}
                value={time} onChange={(e) => setTime(e.target.value)}/>
       </div>
     </td>
