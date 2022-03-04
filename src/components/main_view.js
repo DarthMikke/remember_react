@@ -64,7 +64,7 @@ export default class MainView extends Component {
     let extendedLogger = this.state.extendedLogger === pk ? null : this.state.extendedLogger;
     let listItemsCopy = this.state.listItems.filter(x => {
       if (x.id === pk) {
-        x.last_logged = dtg === null ? (new Date()).toJSON() : dtg.toJSON();
+        x.last_logged = json.last_logged;
       }
       return x;
     })
@@ -99,7 +99,18 @@ export default class MainView extends Component {
   
   async deleteLog(pk) {
     let json = await this.props.deleteLog(pk);
-    this.setState({choreDetails: json});
+    let listItemsCopy = this.state.listItems.filter(x => {
+      if (x.id === json.id) {
+        x.last_logged = json.last_logged;
+      }
+      return x;
+    })
+    this.setState(
+      {
+        choreDetails: json,
+        listItems: listItemsCopy,
+      }
+    );
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
