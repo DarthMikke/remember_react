@@ -13,9 +13,10 @@ class App extends Component {
 
     let token = getCookie("token");
     let username = getCookie("username");
-
+    
+    console.log(`Found token ${token} for username ${username}.`);
     this.state = {
-      token: token === undefined || token === "" ? null : token,
+      token: (token === undefined || token === "") ? null : token,
       username: username === undefined ? null : username,
       lists: [],
       selected_list: null,
@@ -38,6 +39,8 @@ class App extends Component {
     setCookie('token', token, 30);
     this.setState({username: username, token: token});
     console.log(`Logged in as ${username}`);
+    this.API = new API(this.base_url, getCookie('csrftoken'), token);
+    this.getLists();
   }
 
   async selectList(pk) {
@@ -55,8 +58,11 @@ class App extends Component {
     if (response.status === 200) {
       this.setState({lists: json['checklists']});
       return;
+    } else if (response.status === 401) {
+      setCookie("token", "", -1);
+      setCookie("username", getCookie('username'), -1)
     } else {
-      setCookie("token", "", -1)
+      console.log(response.status);
     }
   }
 
@@ -116,30 +122,40 @@ class App extends Component {
   }
 
   updateChore(pk, name, checklist) {
-
+  
   }
 
-  async logChore(pk, date=null) {
+  async logChore(pk, note="", date=null) {
     if (date === null) {
+      console.log(`Logging chore ${pk} with note ${note} now...`);
       date = new Date();
+    } else {
+      console.log(`Logging chore ${pk} with note ${note} at ${date.toJSON()}...`);
     }
-    console.log(`Logging chore ${pk} at ${date.toUTCString()}...`);
-    await this.API.get(`chores/api/chore/${pk}/log`);
-    await this.selectList(this.state.selected_list.id);
+    let response = await this.API.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
+    return await response.json();
   }
 
   deleteChore(pk) {
 
   }
+  
+  async deleteLog(pk) {
+    console.log(`Deleting log ${pk}`);
+    let response = await this.API.get(`chores/api/log/${pk}/delete`);
+    if (response.status === 200) {
+      console.log(`Deleted.`);
+      let json = await response.json();
+      return json;
+    }
+  }
 
   // React methods
-  componentDidMount() {
+  async componentDidMount() {
     if (this.state.token === null) {
       return;
     }
-    this.API = new API(this.base_url, getCookie('csrftoken'), this.state.token);
     this.login(this.state.username, this.state.token);
-    this.getLists();
   }
 
   render() {
@@ -164,8 +180,9 @@ class App extends Component {
               deleteList={() => this.deleteList(this.state.selected_list.id)}
               addTask={(name) => this.addChore(name, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
-              logChore={(pk, dtg) => this.logChore(pk, dtg)}
+              logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteChore={pk => this.deleteChore(pk)}
+              deleteLog={pk => this.deleteLog(pk)}
               list={this.state.selected_list}/>
           </> }
         </div>

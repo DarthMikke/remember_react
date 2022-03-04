@@ -26,7 +26,7 @@ export default function SingleLog (props) {
       <Button classNames={"btn-sm btn-danger"}
               icon={"trash3"}
               caption={"Slett"} visible={false}
-              completion={() => props.delete()}
+              completion={() => props.deleteCompletion()}
       />
     </td>
   </tr>
