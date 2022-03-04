@@ -14,7 +14,9 @@ import {verboseDaysSince} from "../date-utils";
  * @constructor
  */
 export default function Chore(props) {
-  return <tr key={`chore_${props.chore.id}`}>
+  const [chore, setChore] = useState(props.chore)
+  
+  return <tr key={`chore_${chore.id}`}>
     <td>
       <Button classNames={"btn-sm btn-primary"}
                 icon={"check-circle"}
@@ -27,10 +29,10 @@ export default function Chore(props) {
               completion={() => props.extendedLogCompletion()}
       />
     </td>
-    <td>{props.chore.name}</td>
-    <td>{props.chore.last_logged === null
+    <td>{chore.name}</td>
+    <td>{chore.last_logged === null
       ? <i>Enno ikkje loggført</i>
-      : verboseDaysSince(props.chore.last_logged)}</td>
+      : verboseDaysSince(chore.last_logged)}</td>
     <td>
       <Button classNames={"btn-sm btn-primary"}
               icon={"search"}
@@ -49,4 +51,5 @@ export default function Chore(props) {
       />
     </td>
   </tr>
+  
 }

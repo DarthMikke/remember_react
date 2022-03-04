@@ -122,20 +122,32 @@ class App extends Component {
   }
 
   updateChore(pk, name, checklist) {
-
+  
   }
 
   async logChore(pk, note="", date=null) {
     if (date === null) {
+      console.log(`Logging chore ${pk} with note ${note} now...`);
       date = new Date();
+    } else {
+      console.log(`Logging chore ${pk} with note ${note} at ${date.toJSON()}...`);
     }
-    console.log(`Logging chore ${pk} with note ${note} at ${date.toJSON()}...`);
-    await this.API.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
-    await this.selectList(this.state.selected_list.id);
+    let response = await this.API.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
+    return await response.json();
   }
 
   deleteChore(pk) {
 
+  }
+  
+  async deleteLog(pk) {
+    console.log(`Deleting log ${pk}`);
+    let response = await this.API.get(`chores/api/log/${pk}/delete`);
+    if (response.status === 200) {
+      console.log(`Deleted.`);
+      let json = await response.json();
+      return json;
+    }
   }
 
   // React methods
@@ -170,6 +182,7 @@ class App extends Component {
               getChore={(pk) => this.getChore(pk)}
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteChore={pk => this.deleteChore(pk)}
+              deleteLog={pk => this.deleteLog(pk)}
               list={this.state.selected_list}/>
           </> }
         </div>
