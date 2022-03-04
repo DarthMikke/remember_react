@@ -34,3 +34,4 @@ jobs:
           noChangelogLabel: Missing changelog
           # Simple or Detailed
           # checkNotification: # optional, default is Detailed
+          env: "GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
