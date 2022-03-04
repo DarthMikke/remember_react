@@ -1,37 +1,6 @@
 import Button from "./Button";
-import React from "react";
-
-/**
- * @param {Date|string} from
- * @param {Date} to
- * @returns {number}
- * */
-function daysSince(from, to=new Date()) {
-  let day = 24*3600*1000;
-  if (typeof(from) === "string") {
-    from = new Date(from);
-  }
-  let from_day = from.getTime() - from.getTime()%(day)
-  let to_day = to.getTime() - to.getTime()%(day)
-  let diff = to_day - from_day;
-  return Math.floor(diff/(day));
-}
-
-/**
- * @param {Date|string} from
- * @param {Date} to
- * @returns {string}
- * */
-function verboseDaysSince(from, to) {
-  let days = daysSince(from, to);
-  if (days === 0) {
-    return "i dag";
-  }
-  else if (days === 1) {
-    return "i går";
-  }
-  return `${days} d. sidan`;
-}
+import React, {useState} from "react";
+import {verboseDaysSince} from "../date-utils";
 
 /**
  *

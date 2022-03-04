@@ -1,24 +1,5 @@
-import {useState} from "react";
-
-/**
- * Parses datetime in format dd.mm.yyyy HH:MM
- * @param from {string}
- * @returns {Date}
- */
-function parseDate(from) {
-  let reg = /([0-9]{2}).([0-9]{2}).([0-9]{4})\s([0-9]{2}).([0-9]{2})/g;
-  let array = reg.exec(from);
-  if (array === null) {
-    return null;
-  }
-  let tzOffset = -(new Date().getTimezoneOffset());
-  let hrsOffset = Math.floor(tzOffset/60);
-  let minutesOffset = tzOffset % 60;
-  let offsetPositive = tzOffset >= 0;
-  let [_, day, month, year, hours ,minutes] = array;
-  let offsetString = (offsetPositive ? "+" : "-") + String(hrsOffset).padStart(2, "0") + ":" + String(minutesOffset).padStart(2, "0");
-  return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00.000${offsetString}`);
-}
+import {useEffect, useState} from "react";
+import {parseDate} from "../date-utils";
 
 export default function ExtendedLogger(props) {
   let now = new Date();
