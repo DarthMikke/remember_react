@@ -164,6 +164,12 @@ export default class RegisterView extends Component {
           }
         }
         );
+
+      document.querySelector("#register-username").value = "";
+      document.querySelector("#register-email").value = "";
+      document.querySelector("#register-password").value = "";
+      document.querySelector("#register-repeat-password").value = "";
+      
       return;
     }
 
