@@ -234,25 +234,39 @@ export default class RegisterView extends Component {
         <form>
           { register_errors }
           <div className={"my-2"}>
-            <label htmlFor="register-username" className="form-label">Brukarnamn</label>
-            <input type="text" className="form-control" id="register-username"/>
+            <label
+              htmlFor="register-username"
+              className={"form-label" + (this.state.register_fields_valid[0] ? "" : " is-invalid")}>
+              Brukarnamn
+            </label>
+            <input type="text" id="register-username"
+                   className={"form-control" + (this.state.register_fields_valid[0] ? "" : " is-invalid")}
+            />
           </div>
           <div className={"my-2"}>
-            <label htmlFor="register-email" className="form-label">E-postadresse</label>
-            <input type="text" className="form-control" id="register-email"/>
+            <label htmlFor="register-email"
+                   className={"form-label" + (this.state.register_fields_valid[1] ? "" : " is-invalid")}
+            >E-postadresse</label>
+            <input type="text" id="register-email"
+                   className={"form-control" + (this.state.register_fields_valid[1] ? "" : " is-invalid")}
+            />
           </div>
           <div className={"my-2"}>
-            <label htmlFor="register-password" className="form-label">Passord</label>
-            <input type="password" className="form-control" id="register-password"/>
+            <label htmlFor="register-password"
+                   className={"form-label" + (this.state.register_fields_valid[2] ? "" : " is-invalid")}
+            >Passord</label>
+            <input type="password" id="register-password"
+                   className={"form-control" + (this.state.register_fields_valid[2] ? "" : " is-invalid")}
+            />
           </div>
           <div className={"my-2"}>
             <label
               htmlFor="register-repeat-password"
-              className={ this.state.register_passwords_matching ? "form-label" : "form-label is-invalid" }
+              className={"form-label" + (this.state.register_fields_valid[3] ? "" : " is-invalid")}
             >Gjenta passordet</label>
             <input
               type="password"
-              className={ this.state.register_passwords_matching ? "form-control" : "form-control is-invalid" }
+              className={"form-control" + (this.state.register_fields_valid[3] ? "" : " is-invalid")}
               id="register-repeat-password"/>
           </div>
           <div className={"my-2"}>
