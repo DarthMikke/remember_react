@@ -16,8 +16,8 @@ import {verboseDaysSince} from "../date-utils";
 export default function Chore(props) {
   const [chore, setChore] = useState(props.chore)
   
-  return <tr key={`chore_${chore.id}`}>
-    <td>
+  return <div className={"row border-top justify-content-between my-1 py-1"} key={`chore_${chore.id}`}>
+    <div className={"col-auto"}>
       <Button classNames={"btn-sm btn-primary"}
                 icon={"check-circle"}
                 caption={"Logg"} visible={false}
@@ -28,14 +28,19 @@ export default function Chore(props) {
               caption={"Logg i fortida"} visible={false}
               completion={() => props.extendedLogCompletion()}
       />
-    </td>
-    <td>{chore.name}</td>
-    <td>{chore.last_logged === null
-      ? <i>Enno ikkje loggført</i>
-      : verboseDaysSince(chore.last_logged)}</td>
-    <td>
+    </div>
+    <div className={"col-6 col-sm-7 col-lg-8"}>
+      <div className={"row justify-content-between"}>
+        <div className={"col-auto"}>{chore.name}</div>
+        <div className={"col-auto"}>{chore.last_logged === null
+          ? <i>Enno ikkje loggført</i>
+          : verboseDaysSince(chore.last_logged)}
+        </div>
+      </div>
+    </div>
+    <div className={"col"}>
       <Button classNames={"btn-sm btn-primary"}
-              icon={"search"}
+              icon={"list-check"}
               caption={"Detaljar"} visible={false}
               completion={() => props.detailsCompletion()}
       />
@@ -49,7 +54,7 @@ export default function Chore(props) {
               caption={"Slett"} visible={false}
               completion={() => props.deleteCompletion()}
       />
-    </td>
-  </tr>
+    </div>
+  </div>
   
 }

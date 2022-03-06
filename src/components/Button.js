@@ -18,12 +18,12 @@ export default function (props) {
     classes = classes + " " + props.classNames;
   }
 
-  return <a
-    href={"#"}
+  return <button
+    href={""}
     onClick={() => props.completion()}
     className={classes}
     title={props.caption}
   >
     {icon} {caption}
-  </a>
+  </button>
 }

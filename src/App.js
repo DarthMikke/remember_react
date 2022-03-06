@@ -163,7 +163,14 @@ class App extends Component {
       ? null
       : this.state.lists.filter(x => x.id === this.state.selected_list_id)[0];
     return <>
-        <Navbar username={this.state.username}/>
+        <Navbar
+          username={this.state.username}
+          logout={() => {
+            setCookie("username", "", -1);
+            setCookie("token", "", -1);
+            this.setState({username: null, token: null});
+          }}
+        />
         <div className="row m-0">
         { this.state.token === null
           ?

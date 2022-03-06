@@ -27,5 +27,5 @@ export default function getCookie(name) {
 export function setCookie(name, value, duration=1) {
   let now = new Date();
   now.setTime(now.getTime() + (duration*24*3600*1000));
-  document.cookie = `${name}=${value}; expires=${now.toUTCString()}`;
+  document.cookie = `${name}=${value}; path=/; expires=${now.toUTCString()}`;
 }

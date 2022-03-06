@@ -1,6 +1,6 @@
 {
   "name": "remember_frontend",
-  "version": "2022.1a2",
+  "version": "2022.1a3",
   "homepage": "/static/remember/",
   "private": true,
   "dependencies": {
