@@ -36,17 +36,16 @@ export default function ExtendedLogger(props) {
     props.completion(note, dtg);
   }
   
-  return <tr>
-    <td/>
-    <td>
+  return <div className={"row justify-content-between gy-1"}>
+    <div className={"col-xs-12 col-sm"}>
       <div className={"input-group input-group-sm"}>
         <input className={"form-control"} placeholder={"Notat"} type={"text"} id={"note"}
                value={note} onChange={event => setNote(event.target.value)}
         />
       </div>
-    </td>
-    <td>
-      <div className={"input-group input-group-sm row"}>
+    </div>
+    <div className={"col-xs-12 col-sm"}>
+      <div className={"input-group input-group-sm"}>
         <span className="input-group-text col-2">Dato: </span>
         <input className={ (invalidDt) + " form-control col-3" }
                placeholder="date" maxLength={10} type={"text"} id={"date"}
@@ -56,9 +55,9 @@ export default function ExtendedLogger(props) {
                placeholder="time" maxLength={5} type={"text"} id={"time"}
                value={time} onChange={(e) => setTime(e.target.value)}/>
       </div>
-    </td>
-    <td>
+    </div>
+    <div className={"col-xs-12 col-sm text-end"}>
       <button className={"btn btn-sm btn-primary ms-1"} onClick={() => submit()}>Lagre</button>
-    </td>
-  </tr>
+    </div>
+  </div>
 }

@@ -8,7 +8,7 @@ export default class Navbar extends Component {
     <div className="container-fluid m-0">
         <a className="navbar-brand" href="/">Chores</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                data-bs-target=".collapse" aria-controls="collapse" aria-expanded="false"
                 aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"/>
         </button>

@@ -171,7 +171,7 @@ class App extends Component {
             this.setState({username: null, token: null});
           }}
         />
-        <div className="container-fluid row m-0">
+        <div className="row m-0">
         { this.state.token === null
           ?
           <RegisterView
