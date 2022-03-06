@@ -177,12 +177,10 @@ export default class MainView extends Component {
               completion={() => {this.props.deleteList()}}
               classNames={"btn-danger"}
       />
-      <table className={"table"}>
-        <tbody>
-        { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
-        { table }
-        </tbody>
-      </table>
+      <div className={"d-grid g-2"}>
+      { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
+      { table }
+      </div>
     </div>;
   }
 }
