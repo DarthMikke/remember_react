@@ -18,16 +18,15 @@ function formatDate(date) {
 }
 
 export default function SingleLog (props) {
-  return <tr key={`chore_${props.chore_id}_details_${props.log.id}`}>
-    <td/>
-    <td>{props.log.note}</td>
-    <td>{formatDate(props.log.timestamp)}</td>
-    <td>
+  return <div className={"row justify-content-between"} key={`chore_${props.chore_id}_details_${props.log.id}`}>
+    <div className={"col-auto"}>{props.log.note}</div>
+    <div className={"col-auto"}>{formatDate(props.log.timestamp)}</div>
+    <div className={"col-auto text-end"}>
       <Button classNames={"btn-sm btn-danger"}
               icon={"trash3"}
               caption={"Slett"} visible={false}
               completion={() => props.deleteCompletion()}
       />
-    </td>
-  </tr>
+    </div>
+  </div>
 }
