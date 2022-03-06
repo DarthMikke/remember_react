@@ -8,14 +8,15 @@ export default class RegisterView extends Component {
       login_message: {
         display: false,
         success: false,
-        message: null,
+        message: [],
       },
       register_message: {
         display: false,
         success: false,
-        message: null,
+        messages: [],
       },
       register_passwords_matching: true,
+      register_fields_valid: [true, true, true, true],
       registered: false,
     }
     this.csrftoken = getCookie('csrftoken');
@@ -25,11 +26,12 @@ export default class RegisterView extends Component {
 
     this.alert_messages = {
       1: "Brukarnamnet eller passordet er feil.",
-      2: "Du er no registrert og kan logge inn.",
+      2: "Takk! Du er no registrert og kan logge inn.",
       3: "Passorda er ikkje lik.",
-      4: "Du må godta vilkåra for å bli registrert",
+      4: "Du må godta vilkåra for å bli registrert.",
       5: "Dette brukarnamnet er opptatt. Ville du kanskje logge inn?",
       6: "Ukjent feil. Venlegast ta kontakt med brukarstøtte.",
+      7: "Du må fylle ut alle felt.",
     }
   }
 
@@ -84,23 +86,55 @@ export default class RegisterView extends Component {
 
   async register() {
     let username = document.querySelector("#register-username").value;
+    let email = document.querySelector("#register-email").value;
     let password = document.querySelector("#register-password").value;
     let password2 = document.querySelector("#register-repeat-password").value;
-    let email = document.querySelector("#register-email").value;
+
+    let register_fields_valid = [...new Array(this.state.register_fields_valid.length).fill(true)];
+    let messages = [];
+
+    // Check if the username is empty
+    if (username === "") {
+      register_fields_valid[0] = false;
+      messages.push(7);
+    }
+
+    // Check if the email is empty
+    if (email === "") {
+      register_fields_valid[1] = false;
+      messages.push(7);
+    }
+
+    // Check if the password fields are empty
+    if (password === "") {
+      register_fields_valid[2] = false;
+      messages.push(7);
+    }
+
+    if (password2 === "") {
+      register_fields_valid[3] = false;
+      messages.push(7);
+    }
 
     // Check if passwords are the same.
     if (password !== password2) {
+      register_fields_valid[3] = false;
+      console.log("Passwords not matching");
+      messages.push(3);
+    }
+
+    // Check if there are any invalid fields
+    if (register_fields_valid.filter(x => x === false).length > 0) {
       this.setState(
         {
-          register_passwords_matching: false,
+          register_fields_valid: register_fields_valid,
           register_message: {
             display: true,
             success: false,
-            message: 3,
+            messages: messages.filter((x, i, array) => array.indexOf(x) === i),
           }
         }
       );
-      console.log("Passwords not matching");
       return;
     }
 
@@ -126,7 +160,7 @@ export default class RegisterView extends Component {
           register_message: {
             display: true,
             success: true,
-            message: 2,
+            messages: [2],
           }
         }
         );
@@ -143,7 +177,7 @@ export default class RegisterView extends Component {
           register_message: {
             display: true,
             success: false,
-            message: 5,
+            messages: [5],
           }
         }
         );
@@ -156,7 +190,7 @@ export default class RegisterView extends Component {
         register_message: {
           display: true,
           success: false,
-          message: 6,
+          messages: [6],
         }
       }
     )
@@ -164,13 +198,17 @@ export default class RegisterView extends Component {
 
   render() {
     let login_errors = this.state.login_message.display
-      ? <div className={"alert " + (this.state.login_message.success ? "alert-success" : "alert-danger")}>
-          { this.alert_messages[this.state.login_message.message] }
+      ? <div className={"my-2 alert " + (this.state.login_message.success ? "alert-success" : "alert-danger")}>
+        { this.state.login_message.messages.map(x =>
+          <p className={"m-0"}>{ this.alert_messages[x] }</p>
+        ) }
         </div>
       : null;
     let register_errors = this.state.register_message.display
-      ? <div className={"alert " + (this.state.register_message.success ? "alert-success" : "alert-danger")}>
-          { this.alert_messages[this.state.register_message.message] }
+      ? <div className={"my-2 alert " + (this.state.register_message.success ? "alert-success" : "alert-danger")}>
+            { this.state.register_message.messages.map(x =>
+            <p className={"m-0"}>{ this.alert_messages[x] }</p>
+            ) }
         </div>
       : null;
     return <div className="row container-fluid gy-3 m-0">
@@ -178,34 +216,36 @@ export default class RegisterView extends Component {
         <h3>Logg inn</h3>
         <form>
           { login_errors }
-          <div>
+          <div className={"my-2"}>
             <label htmlFor="login-username" className="form-label">Brukarnamn</label>
             <input type="text" className="form-control" id="login-username"/>
           </div>
-          <div>
+          <div className={"my-2"}>
             <label htmlFor="login-password" className="form-label">Passord</label>
             <input type="password" className="form-control" id="login-password"/>
           </div>
-          <div onClick={this.login} className="btn btn-primary">Logg inn!</div>
+          <div className={"my-2"}>
+            <div onClick={this.login} className="btn btn-primary">Logg inn!</div>
+          </div>
         </form>
       </div>
       <div className="col-sm-6">
         <h3>Registrer ny brukar</h3>
         <form>
           { register_errors }
-          <div>
+          <div className={"my-2"}>
             <label htmlFor="register-username" className="form-label">Brukarnamn</label>
             <input type="text" className="form-control" id="register-username"/>
           </div>
-          <div>
+          <div className={"my-2"}>
             <label htmlFor="register-email" className="form-label">E-postadresse</label>
             <input type="text" className="form-control" id="register-email"/>
           </div>
-          <div>
+          <div className={"my-2"}>
             <label htmlFor="register-password" className="form-label">Passord</label>
             <input type="password" className="form-control" id="register-password"/>
           </div>
-          <div>
+          <div className={"my-2"}>
             <label
               htmlFor="register-repeat-password"
               className={ this.state.register_passwords_matching ? "form-label" : "form-label is-invalid" }
@@ -215,7 +255,9 @@ export default class RegisterView extends Component {
               className={ this.state.register_passwords_matching ? "form-control" : "form-control is-invalid" }
               id="register-repeat-password"/>
           </div>
-          <div onClick={this.register} className="btn btn-primary">Registrer!</div>
+          <div className={"my-2"}>
+            <div onClick={this.register} className="btn btn-primary">Registrer!</div>
+          </div>
         </form>
       </div>
     </div>
