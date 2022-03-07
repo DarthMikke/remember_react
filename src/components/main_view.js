@@ -40,9 +40,11 @@ export default class MainView extends Component {
     this.toggleEditing();
   }
 
+  // Task actions
   addTask() {
     let taskName = document.querySelector("#chore-input").value;
-    this.props.addTask(taskName);
+    let frequency = document.querySelector("#chore-frequency").value;
+    this.props.addTask(taskName, frequency);
     this.toggleNewTask();
   }
 

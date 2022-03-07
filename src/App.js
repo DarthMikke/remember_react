@@ -115,13 +115,17 @@ class App extends Component {
     return json;
   }
 
-  async addChore(name, checklist_pk) {
+  async addChore(name, frequency, checklist_pk) {
     console.log(`Adding ${name} to checklist ${checklist_pk}...`);
-    this.API.post(`chores/api/checklist/${checklist_pk}/add_chore`, {}, {name: name});
+    this.API.post(
+      `chores/api/checklist/${checklist_pk}/add_chore`,
+      {},
+      {name: name, frequency: frequency}
+    );
     await this.selectList(this.state.selected_list.id);
   }
 
-  updateChore(pk, name, checklist) {
+  updateChore(pk, name, frequency, checklist) {
   
   }
 
@@ -185,7 +189,7 @@ class App extends Component {
             <MainView
               updateName={(name) => this.updateList(this.state.selected_list.id, name)}
               deleteList={() => this.deleteList(this.state.selected_list.id)}
-              addTask={(name) => this.addChore(name, this.state.selected_list.id)}
+              addTask={(name, frequency) => this.addChore(name, frequency, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteChore={pk => this.deleteChore(pk)}
