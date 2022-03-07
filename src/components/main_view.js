@@ -20,16 +20,19 @@ export default class MainView extends Component {
       choreDetails: {logs: []},
       extendedLogger: null,
       listItems: listItems,
+      editingTask: null,
     };
 
     this.toggleNewTask = this.toggleNewTask.bind(this);
     this.addTask = this.addTask.bind(this);
     this.logChore = this.logChore.bind(this);
+    this.editTask = this.editTask.bind(this);
     this.choreDetails = this.choreDetails.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
     this.updateName = this.updateName.bind(this);
   }
 
+  // List actions
   toggleEditing() {
     this.setState({editName: !this.state.editName});
   }
@@ -79,6 +82,14 @@ export default class MainView extends Component {
     )
   }
 
+  editTask(pk) {
+    if (this.state.editingTask === pk) {
+      this.setState({editingTask: null});
+      return;
+    }
+    this.setState({editingTask: pk});
+  }
+
   deleteChore(pk) {
     this.props.deleteChore(pk);
   }
@@ -115,6 +126,7 @@ export default class MainView extends Component {
     );
   }
 
+  // React methods
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
     if (prevProps.list !== this.props.list) {
@@ -150,8 +162,10 @@ export default class MainView extends Component {
           <Chore chore={x} logCompletion={() => this.logChore(x.id)}
                  detailsCompletion={() => this.choreDetails(x.id)}
                  deleteCompletion={() => this.deleteChore(x.id)}
-                 updateCompletion={() => {}}
+                 editCompletion={() => this.editTask(x.id)}
+                 updateCompletion={() => this.updateChore(x.id)}
                  extendedLogCompletion={() => this.toggleExtendedLogger(x.id)}
+                 editing={this.state.editingTask === x.id}
           />
           {extendedLogger}
           {details}
