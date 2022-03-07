@@ -14,7 +14,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "canbuild": "python3 ./canbuild.py",
+    "build": "python3 ./canbuild.py && react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject"
   },
