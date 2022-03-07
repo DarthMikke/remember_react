@@ -125,8 +125,20 @@ class App extends Component {
     await this.selectList(this.state.selected_list.id);
   }
 
-  updateChore(pk, name, frequency, checklist) {
-  
+  async updateChore(pk, name, frequency) {
+    console.log(`Updating chore ${pk} to name ${name} and freq. of ${frequency} days...`);
+    let response = await this.API.post(
+      `chores/api/chore/${pk}/update`,
+      {},
+      {
+        name: name,
+        frequency: frequency
+      }
+      );
+    if (response.status === 200) {
+      await this.selectList(this.state.selected_list.id);
+      return response.json();
+    }
   }
 
   async logChore(pk, note="", date=null) {
@@ -191,6 +203,7 @@ class App extends Component {
               deleteList={() => this.deleteList(this.state.selected_list.id)}
               addTask={(name, frequency) => this.addChore(name, frequency, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
+              updateTask={(pk, name, frequency) => this.updateChore(pk, name, frequency)}
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteChore={pk => this.deleteChore(pk)}
               deleteLog={pk => this.deleteLog(pk)}

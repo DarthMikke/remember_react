@@ -27,6 +27,7 @@ export default class MainView extends Component {
     this.addTask = this.addTask.bind(this);
     this.logChore = this.logChore.bind(this);
     this.editTask = this.editTask.bind(this);
+    this.updateChore = this.updateChore.bind(this);
     this.choreDetails = this.choreDetails.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
     this.updateName = this.updateName.bind(this);
@@ -90,6 +91,13 @@ export default class MainView extends Component {
     this.setState({editingTask: pk});
   }
 
+  updateChore(pk) {
+    let name = document.querySelector("#task-edit-name").value;
+    let frequency = document.querySelector("#task-edit-frequency").value;
+    this.setState({editingTask: null});
+    this.props.updateTask(pk, name, frequency);
+  }
+
   deleteChore(pk) {
     this.props.deleteChore(pk);
   }
@@ -129,8 +137,8 @@ export default class MainView extends Component {
   // React methods
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
-    if (prevProps.list !== this.props.list) {
-      let listItems = this.props.list === null ? [] : this.props.list.items;
+    if (prevProps.list === null && this.props.list !== null) {
+      let listItems = this.props.list.items === undefined ? [] : this.props.list.items;
       this.setState({listItems: listItems})
     }
   }

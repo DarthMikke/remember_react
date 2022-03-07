@@ -42,7 +42,7 @@ export default function Chore(props) {
         <Button caption={"Lagre"} visible={true}
                 classNames={"btn-sm btn-primary"}
                 icon={"check-circle"}
-                completion={() => props.completion()}/>
+                completion={() => props.updateCompletion()}/>
         <Button classNames={"btn-sm btn-warning"}
                 icon={"x-circle"}
                 caption={"Avbryt"} visible={false}
@@ -67,7 +67,7 @@ export default function Chore(props) {
     </div>
     <div className={"col-4 col-sm-7 col-lg-8"}>
       <div className={"row justify-content-between"}>
-        <div className={"col-auto"}>{chore.name}</div>
+        <div className={"col-auto"}>{name}</div>
         <div className={"col-auto"}>{chore.last_logged === null
           ? <i>Enno ikkje loggført</i>
           : verboseDaysSince(chore.last_logged)}
