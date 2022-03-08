@@ -18,7 +18,13 @@ export default class MainView extends Component {
       addTask: false,
       selectedChore: null,
       choreDetails: {logs: []},
+      /**
+       * @params {null|number}
+       */
       extendedLogger: null,
+      /**
+       * @params {[object]}
+       */
       listItems: listItems,
       editingTask: null,
     };

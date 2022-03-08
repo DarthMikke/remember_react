@@ -16,9 +16,21 @@ class App extends Component {
     
     console.log(`Found token ${token} for username ${username}.`);
     this.state = {
+      /**
+       * @param {string|null}
+       */
       token: (token === undefined || token === "") ? null : token,
+      /**
+       * @param {string|null}
+       */
       username: username === undefined ? null : username,
+      /**
+       * @param {[object]}
+       */
       lists: [],
+      /**
+       * @param {object|null}
+       */
       selected_list: null,
     }
 
