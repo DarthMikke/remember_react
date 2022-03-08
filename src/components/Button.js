@@ -34,7 +34,7 @@ Button.propTypes = {
   caption: PropTypes.string,
   visible: PropTypes.bool,
   completion: PropTypes.func,
-  icon: PropTypes.oneOfType([PropTypes.string, null]),
+  icon: PropTypes.string,
   classNames: PropTypes.string,
   disabled: PropTypes.bool,
 }
