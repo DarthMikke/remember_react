@@ -129,12 +129,22 @@ class App extends Component {
 
   async addTask(name, frequency, checklist_pk) {
     console.log(`Adding ${name} to checklist ${checklist_pk}...`);
-    let response = this.API.post(
+    let response = await this.API.post(
       `chores/api/checklist/${checklist_pk}/add_chore`,
       {},
       {name: name, frequency: frequency}
     );
-    await this.selectList(this.state.selected_list.id);
+    if (response.status === 200) {
+      let newItem = await response.json();
+      console.log('Adding', newItem, 'to the local list.');
+      let newList = {
+        ...this.state.selected_list,
+        items: [...this.state.selected_list.items, newItem]
+      };
+      this.setState({selected_list: newList});
+      console.log('Added.');
+    }
+    console.log('An error has occured.');
     return response;
   }
 
@@ -169,8 +179,15 @@ class App extends Component {
     console.log(`Deleting task ${pk}...`);
     let response = await this.API.get(`chores/api/chore/${pk}/delete`);
     if (response.status === 200) {
-      console.log(`Deleted.`);
+      console.log(`Deleting task ${pk} from the local list.`);
+      let newList = {
+        ...this.state.selected_list,
+        items: [...this.state.selected_list.items.filter(x => x.id !== pk)]
+      };
+
       let json = await response.json();
+      this.setState({selected_list: newList});
+      console.log(`Deleted.`);
       return json;
     }
     console.log(`An error occured during deleting task ${pk}.`);
