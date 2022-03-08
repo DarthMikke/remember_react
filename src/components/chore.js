@@ -93,9 +93,11 @@ export default function Chore(props) {
       />
     </div>
     { showDeleteModal
-      ? <div className="modal fade show" style={{display: "block"}}>
+      ? <><div className={"modal-backdrop show"}/>
+      <div className="modal" style={{display: "block"}}>
         <div className={"modal-dialog"}>
           <div className="modal-content">
+          <div className="modal-body">
           <p>Er du sikker på at du vil slette { name }? Det vil også slette alle loggar på denne oppgåva.</p>
           </div>
           <div className="modal-footer">
