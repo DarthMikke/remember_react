@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 /**
  * props should contain:
@@ -27,4 +28,17 @@ export default function Button(props) {
   >
     {icon} {caption}
   </button>
+}
+
+Button.propTypes = {
+  caption: PropTypes.string,
+  visible: PropTypes.bool,
+  completion: PropTypes.func,
+  icon: PropTypes.oneOfType([PropTypes.string, null]),
+  classNames: PropTypes.string,
+  disabled: PropTypes.bool,
+}
+Button.defaultProps = {
+  visible: true,
+  disabled: false,
 }
