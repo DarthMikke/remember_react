@@ -123,8 +123,6 @@ export default class MainView extends Component {
 
   deleteChore(pk) {
     this.props.deleteTask(pk);
-    let updatedList = this.state.listItems.filter(x => x.id !== pk);
-    this.setState({listItems: updatedList});
   }
 
   async choreDetails(pk) {

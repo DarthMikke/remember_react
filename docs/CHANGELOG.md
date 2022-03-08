@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Editing tasks.
 - Deleting tasks.
 - Error message for adding tasks.
+### Fixed
+- Adding tasks now works as expected.
 
 [v 2022.1a4] - 2022-03-08
 -----------------
