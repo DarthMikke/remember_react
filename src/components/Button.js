@@ -17,12 +17,13 @@ export default function Button(props) {
   if (props.classNames !== undefined) {
     classes = classes + " " + props.classNames;
   }
+  let disabled = props.disabled === undefined ? false : props.disabled;
 
   return <button
-    href={""}
     onClick={() => props.completion()}
     className={classes}
     title={props.caption}
+    disabled={disabled}
   >
     {icon} {caption}
   </button>

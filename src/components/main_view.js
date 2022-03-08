@@ -15,7 +15,11 @@ export default class MainView extends Component {
     
     this.state = {
       editName: false,
-      addTask: false,
+      addTask: {
+        display: false,
+        lock: false,
+        error: false
+      },
       selectedChore: null,
       choreDetails: {logs: []},
       /**
@@ -51,15 +55,28 @@ export default class MainView extends Component {
   }
 
   // Task actions
-  addTask() {
+  async addTask() {
     let taskName = document.querySelector("#chore-input").value;
     let frequency = document.querySelector("#chore-frequency").value;
-    this.props.addTask(taskName, frequency);
-    this.toggleNewTask();
+    try {
+      let response = await this.props.addTask(taskName, frequency);
+      if (response.status === 200) {
+        this.toggleNewTask();
+        return;
+      }
+    } catch {
+
+    }
+    this.setState({addTask: {display: true, lock: false, error: "Det oppstod ein feil. Prøv igjen."}})
   }
 
   toggleNewTask() {
-    this.setState({addTask: !this.state.addTask});
+    let addTask = {
+      display: !this.state.addTask.display,
+      lock: false,
+      error: false,
+    };
+    this.setState({addTask: addTask});
   }
   
   toggleExtendedLogger(pk) {
@@ -215,7 +232,9 @@ export default class MainView extends Component {
               classNames={"btn-danger"}
       />
       <div className={"d-grid g-2"}>
-      { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
+      { this.state.addTask.display
+        ? <NewTask state={this.state.addTask} completion={() => this.addTask()}/>
+        : null }
       { table }
       </div>
     </div>;
