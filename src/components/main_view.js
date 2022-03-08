@@ -137,9 +137,10 @@ export default class MainView extends Component {
   // React methods
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
-    if (prevProps.list === null && this.props.list !== null) {
+    if ((prevProps.list === null && this.props.list !== null) ||
+      (this.props.list !== null && prevProps.list.items !== this.props.list.items)) {
       let listItems = this.props.list.items === undefined ? [] : this.props.list.items;
-      this.setState({listItems: listItems})
+      this.setState({listItems: listItems});
     }
   }
  
