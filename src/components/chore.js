@@ -14,9 +14,10 @@ import {verboseDaysSince} from "../date-utils";
  * @constructor
  */
 export default function Chore(props) {
-  const [chore, setChore] = useState(props.chore)
-  const [name, setName] = useState(props.chore.name)
-  const [frequency, setFrequency] = useState(props.chore.frequency)
+  const [chore, setChore] = useState(props.chore);
+  const [name, setName] = useState(props.chore.name);
+  const [frequency, setFrequency] = useState(props.chore.frequency);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   if (props.editing) {
     return <div className={"row border-top justify-content-between my-1 py-1"} key={`chore_${chore.id}`}>
@@ -88,9 +89,29 @@ export default function Chore(props) {
       <Button classNames={"btn-sm btn-danger"}
               icon={"trash3"}
               caption={"Slett"} visible={false}
-              completion={() => props.deleteCompletion()}
+              completion={() => setShowDeleteModal(true)}
       />
     </div>
+    { showDeleteModal
+      ? <div className="modal fade show" style={{display: "block"}}>
+        <div className={"modal-dialog"}>
+          <div className="modal-content">
+          <p>Er du sikker på at du vil slette { name }? Det vil også slette alle loggar på denne oppgåva.</p>
+          </div>
+          <div className="modal-footer">
+            <Button caption={"Nei"} visible={"true"}
+                    classNames={"btn-primary"}
+                    completion={() => setShowDeleteModal(false)}
+            />
+            <Button caption={"Ja, slett"} visible={"true"}
+                    classNames={"btn-danger"} icon={"trash3"}
+                    completion={() => setShowDeleteModal(false)}
+            />
+          </div>
+        </div>
+      </div>
+      : null }
+
   </div>
   
 }
