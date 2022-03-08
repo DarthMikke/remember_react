@@ -8,7 +8,7 @@ import React from "react";
  * - completion
  * - classNames: additional button classes
  * */
-export default function (props) {
+export default function Button(props) {
   let caption_visible = props.visible === undefined ? true : props.visible;
   let visible_classes = !caption_visible ? "visually-hidden visually-hidden-focusable" : null;
   let caption = <span className={visible_classes}>{props.caption}</span>;

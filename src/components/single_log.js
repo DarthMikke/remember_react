@@ -18,10 +18,10 @@ function formatDate(date) {
 }
 
 export default function SingleLog (props) {
-  return <div className={"row justify-content-between"} key={`chore_${props.chore_id}_details_${props.log.id}`}>
+  return <div className={"row justify-content-between my-1"} key={`chore_${props.chore_id}_details_${props.log.id}`}>
     <div className={"col-auto"}>{props.log.note}</div>
     <div className={"col-auto"}>{formatDate(props.log.timestamp)}</div>
-    <div className={"col-auto text-end"}>
+    <div className={"col-auto"}>
       <Button classNames={"btn-sm btn-danger"}
               icon={"trash3"}
               caption={"Slett"} visible={false}

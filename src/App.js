@@ -16,13 +16,25 @@ class App extends Component {
     
     console.log(`Found token ${token} for username ${username}.`);
     this.state = {
+      /**
+       * @param {string|null}
+       */
       token: (token === undefined || token === "") ? null : token,
+      /**
+       * @param {string|null}
+       */
       username: username === undefined ? null : username,
+      /**
+       * @param {[object]}
+       */
       lists: [],
+      /**
+       * @param {object|null}
+       */
       selected_list: null,
     }
 
-    this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : "https://millim.no"
+    this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : document.location.origin
     this.API = null;
 
     this.csrftoken = getCookie('csrftoken')
@@ -115,14 +127,30 @@ class App extends Component {
     return json;
   }
 
-  async addChore(name, checklist_pk) {
+  async addChore(name, frequency, checklist_pk) {
     console.log(`Adding ${name} to checklist ${checklist_pk}...`);
-    this.API.post(`chores/api/checklist/${checklist_pk}/add_chore`, {}, {name: name});
+    this.API.post(
+      `chores/api/checklist/${checklist_pk}/add_chore`,
+      {},
+      {name: name, frequency: frequency}
+    );
     await this.selectList(this.state.selected_list.id);
   }
 
-  updateChore(pk, name, checklist) {
-  
+  async updateChore(pk, name, frequency) {
+    console.log(`Updating chore ${pk} to name ${name} and freq. of ${frequency} days...`);
+    let response = await this.API.post(
+      `chores/api/chore/${pk}/update`,
+      {},
+      {
+        name: name,
+        frequency: frequency
+      }
+      );
+    if (response.status === 200) {
+      await this.selectList(this.state.selected_list.id);
+      return response.json();
+    }
   }
 
   async logChore(pk, note="", date=null) {
@@ -136,8 +164,15 @@ class App extends Component {
     return await response.json();
   }
 
-  deleteChore(pk) {
-
+  async deleteTask(pk) {
+    console.log(`Deleting task ${pk}...`);
+    let response = await this.API.get(`chores/api/chore/${pk}/delete`);
+    if (response.status === 200) {
+      console.log(`Deleted.`);
+      let json = await response.json();
+      return json;
+    }
+    console.log(`An error occured during deleting task ${pk}.`);
   }
   
   async deleteLog(pk) {
@@ -185,10 +220,11 @@ class App extends Component {
             <MainView
               updateName={(name) => this.updateList(this.state.selected_list.id, name)}
               deleteList={() => this.deleteList(this.state.selected_list.id)}
-              addTask={(name) => this.addChore(name, this.state.selected_list.id)}
+              addTask={(name, frequency) => this.addChore(name, frequency, this.state.selected_list.id)}
               getChore={(pk) => this.getChore(pk)}
+              updateTask={(pk, name, frequency) => this.updateChore(pk, name, frequency)}
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
-              deleteChore={pk => this.deleteChore(pk)}
+              deleteTask={pk => this.deleteTask(pk)}
               deleteLog={pk => this.deleteLog(pk)}
               list={this.state.selected_list}/>
           </> }
