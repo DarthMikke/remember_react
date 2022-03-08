@@ -143,13 +143,17 @@ export default class MainView extends Component {
   // React methods
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
-    if ((prevProps.list === null && this.props.list !== null) ||
-      (this.props.list !== null && prevProps.list.items !== this.props.list.items)) {
-      let listItems = this.props.list.items === undefined ? [] : this.props.list.items;
-      this.setState({listItems: listItems});
+    let listItems = [];
+    if (this.props.list !== null) {
+      if (this.props.list.items !== undefined) {
+        if (prevProps.list === null || prevProps.list.items !== this.props.list.items) {
+          listItems = this.props.list.items.map(x => x);
+          this.setState({listItems: listItems});
+        }
+      }
     }
   }
- 
+
   render() {
     if (this.props.list === null) {
       return <div className="col-md-9 col-lg-10">Du har ikkje valt noka liste</div>;
@@ -174,7 +178,7 @@ export default class MainView extends Component {
           : null;
         
         return <>
-          <Chore chore={x} logCompletion={() => this.logChore(x.id)}
+          <Chore key={`chore_${x.id}`} chore={x} logCompletion={() => this.logChore(x.id)}
                  detailsCompletion={() => this.choreDetails(x.id)}
                  deleteCompletion={() => this.deleteChore(x.id)}
                  editCompletion={() => this.editTask(x.id)}
