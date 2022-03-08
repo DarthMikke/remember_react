@@ -22,7 +22,7 @@ class App extends Component {
       selected_list: null,
     }
 
-    this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : "https://millim.no"
+    this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : document.location.origin
     this.API = null;
 
     this.csrftoken = getCookie('csrftoken')
