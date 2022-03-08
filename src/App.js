@@ -164,8 +164,15 @@ class App extends Component {
     return await response.json();
   }
 
-  deleteChore(pk) {
-
+  async deleteTask(pk) {
+    console.log(`Deleting task ${pk}...`);
+    let response = await this.API.get(`chores/api/chore/${pk}/delete`);
+    if (response.status === 200) {
+      console.log(`Deleted.`);
+      let json = await response.json();
+      return json;
+    }
+    console.log(`An error occured during deleting task ${pk}.`);
   }
   
   async deleteLog(pk) {
@@ -217,7 +224,7 @@ class App extends Component {
               getChore={(pk) => this.getChore(pk)}
               updateTask={(pk, name, frequency) => this.updateChore(pk, name, frequency)}
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
-              deleteChore={pk => this.deleteChore(pk)}
+              deleteTask={pk => this.deleteTask(pk)}
               deleteLog={pk => this.deleteLog(pk)}
               list={this.state.selected_list}/>
           </> }

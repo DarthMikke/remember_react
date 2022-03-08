@@ -19,6 +19,11 @@ export default function Chore(props) {
   const [frequency, setFrequency] = useState(props.chore.frequency);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  function deleteTask() {
+    props.deleteCompletion();
+    setShowDeleteModal(false);
+  }
+
   if (props.editing) {
     return <div className={"row border-top justify-content-between my-1 py-1"} key={`chore_${chore.id}`}>
       <div className={"col-auto"}>
@@ -107,11 +112,13 @@ export default function Chore(props) {
             />
             <Button caption={"Ja, slett"} visible={"true"}
                     classNames={"btn-danger"} icon={"trash3"}
-                    completion={() => setShowDeleteModal(false)}
+                    completion={() => deleteTask()}
             />
+          </div>
           </div>
         </div>
       </div>
+      </>
       : null }
 
   </div>
