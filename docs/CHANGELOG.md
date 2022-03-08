@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+[v 2022.1a4] - 2022-03-08
+-----------------
+### Fixed
+- The API now works with every URL origin, both HTTP and SSL 
+and with or without 'www' prefix.
 
 [v 2022.1a3] - 2022-03-06
 -----------------
