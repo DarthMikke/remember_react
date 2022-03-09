@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+[v 2022.1a5] - 2022-03-09
+-----------------
+### Added
+- Editing tasks.
+- Deleting tasks.
+- Error message for adding tasks.
+### Fixed
+- Adding tasks now works as expected.
+
 [v 2022.1a4] - 2022-03-08
 -----------------
 ### Fixed

@@ -15,21 +15,35 @@ export default class MainView extends Component {
     
     this.state = {
       editName: false,
-      addTask: false,
+      addTask: {
+        display: false,
+        lock: false,
+        error: false
+      },
       selectedChore: null,
       choreDetails: {logs: []},
+      /**
+       * @params {null|number}
+       */
       extendedLogger: null,
+      /**
+       * @params {[object]}
+       */
       listItems: listItems,
+      editingTask: null,
     };
 
     this.toggleNewTask = this.toggleNewTask.bind(this);
     this.addTask = this.addTask.bind(this);
     this.logChore = this.logChore.bind(this);
+    this.editTask = this.editTask.bind(this);
+    this.updateChore = this.updateChore.bind(this);
     this.choreDetails = this.choreDetails.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
     this.updateName = this.updateName.bind(this);
   }
 
+  // List actions
   toggleEditing() {
     this.setState({editName: !this.state.editName});
   }
@@ -40,14 +54,29 @@ export default class MainView extends Component {
     this.toggleEditing();
   }
 
-  addTask() {
+  // Task actions
+  async addTask() {
     let taskName = document.querySelector("#chore-input").value;
-    this.props.addTask(taskName);
-    this.toggleNewTask();
+    let frequency = document.querySelector("#chore-frequency").value;
+    try {
+      let response = await this.props.addTask(taskName, frequency);
+      if (response.status === 200) {
+        this.toggleNewTask();
+        return;
+      }
+    } catch {
+
+    }
+    this.setState({addTask: {display: true, lock: false, error: "Det oppstod ein feil. Prøv igjen."}})
   }
 
   toggleNewTask() {
-    this.setState({addTask: !this.state.addTask});
+    let addTask = {
+      display: !this.state.addTask.display,
+      lock: false,
+      error: false,
+    };
+    this.setState({addTask: addTask});
   }
   
   toggleExtendedLogger(pk) {
@@ -77,8 +106,23 @@ export default class MainView extends Component {
     )
   }
 
+  editTask(pk) {
+    if (this.state.editingTask === pk) {
+      this.setState({editingTask: null});
+      return;
+    }
+    this.setState({editingTask: pk});
+  }
+
+  updateChore(pk) {
+    let name = document.querySelector("#task-edit-name").value;
+    let frequency = document.querySelector("#task-edit-frequency").value;
+    this.setState({editingTask: null});
+    this.props.updateTask(pk, name, frequency);
+  }
+
   deleteChore(pk) {
-    this.props.deleteChore(pk);
+    this.props.deleteTask(pk);
   }
 
   async choreDetails(pk) {
@@ -113,14 +157,20 @@ export default class MainView extends Component {
     );
   }
 
+  // React methods
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
-    if (prevProps.list !== this.props.list) {
-      let listItems = this.props.list === null ? [] : this.props.list.items;
-      this.setState({listItems: listItems})
+    let listItems = [];
+    if (this.props.list !== null) {
+      if (this.props.list.items !== undefined) {
+        if (prevProps.list === null || prevProps.list.items !== this.props.list.items) {
+          listItems = this.props.list.items.map(x => x);
+          this.setState({listItems: listItems});
+        }
+      }
     }
   }
- 
+
   render() {
     if (this.props.list === null) {
       return <div className="col-md-9 col-lg-10">Du har ikkje valt noka liste</div>;
@@ -145,11 +195,13 @@ export default class MainView extends Component {
           : null;
         
         return <>
-          <Chore chore={x} logCompletion={() => this.logChore(x.id)}
+          <Chore key={`chore_${x.id}`} chore={x} logCompletion={() => this.logChore(x.id)}
                  detailsCompletion={() => this.choreDetails(x.id)}
                  deleteCompletion={() => this.deleteChore(x.id)}
-                 updateCompletion={() => {}}
+                 editCompletion={() => this.editTask(x.id)}
+                 updateCompletion={() => this.updateChore(x.id)}
                  extendedLogCompletion={() => this.toggleExtendedLogger(x.id)}
+                 editing={this.state.editingTask === x.id}
           />
           {extendedLogger}
           {details}
@@ -178,7 +230,9 @@ export default class MainView extends Component {
               classNames={"btn-danger"}
       />
       <div className={"d-grid g-2"}>
-      { this.state.addTask ? <NewTask completion={() => this.addTask()}/> : null }
+      { this.state.addTask.display
+        ? <NewTask state={this.state.addTask} completion={() => this.addTask()}/>
+        : null }
       { table }
       </div>
     </div>;
