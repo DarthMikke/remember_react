@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-[Unreleased]
+[v 2022.1a5] - 2022-03-09
 -----------------
 ### Added
 - Editing tasks.
