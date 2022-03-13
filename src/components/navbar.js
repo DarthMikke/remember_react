@@ -25,8 +25,14 @@ export default class Navbar extends Component {
         { this.props.username === null || this.props.username === undefined || this.props.username === "" ? null :
           <div className={"text-end"}>
               <ul className={"navbar-nav"}>
-                  <li className={"nav-item"}>
-                      <a className={"nav-link"} href={"#"} onClick={() => this.props.logout()}>Logg ut</a>
+                  <li className={"nav-item dropdown"}>
+                      <a className={"nav-link dropdown-toggle"} href={"#"} data-bs-toggle="dropdown" >{this.props.username}</a>
+                      <ul className={"dropdown-menu"}>
+                          <li><a className={"dropdown-item"} href={"#"} onClick={()=>console.log("Innstillingar")}>
+                                 Innstillingar
+                          </a></li>
+                          <li><a className={"dropdown-item"} href={"#"} onClick={() => this.props.logout()}>Logg ut</a></li>
+                      </ul>
                   </li>
               </ul>
           </div> }
