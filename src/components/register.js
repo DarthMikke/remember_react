@@ -42,19 +42,33 @@ export default class RegisterView extends Component {
     let formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
-
-    let response = await fetch(
-      `${this.props.base_url}/chores/api/login`,
-      {
-        method: 'post',
-        body: formData,
-        headers: {
-          'x-csrftoken': this.csrftoken
+  
+    let response, json;
+    
+    try {
+      response = await fetch(
+        `${this.props.base_url}/chores/api/login`,
+        {
+          method: 'post',
+          body: formData,
+          headers: {
+            'x-csrftoken': this.csrftoken
+          }
+        })
+      console.log(response.headers);
+      json = await response.json();
+      console.log(json);
+    } catch {
+      this.setState(
+        {
+          login_message: {
+            display: true,
+            success: false,
+            messages: [6]
+          }
         }
-      })
-    console.log(response.headers);
-    let json = await response.json();
-    console.log(json);
+      );
+    }
 
     if (response.status === 200) {
       this.props.login_completion(json.username, json.access_token);
@@ -68,7 +82,7 @@ export default class RegisterView extends Component {
           login_message: {
             display: true,
             success: false,
-            message: 1,
+            messages: [1]
           }
         }
       );
@@ -79,7 +93,7 @@ export default class RegisterView extends Component {
       login_message: {
         display: true,
         success: false,
-        message: 6,
+        messages: [6]
       }
     });
   }
