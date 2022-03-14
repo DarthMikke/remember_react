@@ -6,6 +6,7 @@ import Chore from "./chore";
 import NewTask from "./NewTask";
 import TextFieldForm from "./TextFieldForm";
 import ExtendedLogger from "./ExtendedLogger";
+import UserSearchBox from "./UserSearchBox";
 
 export default class MainView extends Component {
   constructor(props) {
@@ -19,6 +20,11 @@ export default class MainView extends Component {
         display: false,
         lock: false,
         error: false
+      },
+      sharing: {
+        display: false,
+        lock: false,
+        error: false,
       },
       selectedChore: null,
       choreDetails: {logs: []},
@@ -44,6 +50,16 @@ export default class MainView extends Component {
   }
 
   // List actions
+  toggleSharing() {
+    let newObject = {...this.state.sharing, display: !this.state.sharing.display};
+    console.log("Display sharing window:", newObject.display);
+    this.setState({sharing: newObject});
+  }
+
+  async shareList() {
+
+  }
+
   toggleEditing() {
     this.setState({editName: !this.state.editName});
   }
@@ -219,6 +235,21 @@ export default class MainView extends Component {
               completion={() => this.toggleNewTask()}
               classNames={"btn-primary"}
       />
+      <div className={"btn-group"}>
+        <Button key={"share-list"}
+                icon={"box-arrow-up"} caption={"Del"}
+                completion={() => this.toggleSharing()}
+                classNames={"btn-primary rounded"}
+        />
+        <ul className={"dropdown-menu"} style={this.state.sharing.display ?
+          {
+            display: "block",
+            transform: "translateY(40px)"
+          } : null
+        }>
+         <UserSearchBox completion={(query) => this.props.userSearch(query)}/>
+        </ul>
+      </div>
       <Button key={"edit-list"}
               icon={"pencil"} caption={"Rediger"}
               completion={() => {this.toggleEditing()}}

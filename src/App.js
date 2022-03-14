@@ -244,6 +244,15 @@ class App extends Component {
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteTask={pk => this.deleteTask(pk)}
               deleteLog={pk => this.deleteLog(pk)}
+              userSearch={(query) => {
+
+                return new Promise(resolve => {
+                  setTimeout(() => {
+                    resolve([]);
+                    console.log(query);
+                  }, 500);
+                });
+              }}
               list={this.state.selected_list}/>
           </> }
         </div>
