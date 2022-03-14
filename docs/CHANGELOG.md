@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+[v 2022.1a6] - 2022-03-14
+-----------------
+### Added
+- Banner about logging in as test user.
+
+### Changed
+- Username is displayed in the header.
+
 [v 2022.1a5] - 2022-03-09
 -----------------
 ### Added
