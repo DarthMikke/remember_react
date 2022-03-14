@@ -14,15 +14,19 @@ export default class UserSearchBox extends React.Component {
   }
 
   autocomplete(query) {
+    if (query === "") {
+      return;
+    }
     console.log(this.state.searching);
     if (this.state.searching) {
       this.setState({query: query})
       return;
     }
     this.setState({searching: true});
-    this.props.completion(query).then((response) =>
-      this.setState({query: query, searching: false, response: response})
-    );
+    this.props.completion(query).then((response) => {
+      console.log(response.profiles);
+      this.setState({query: query, searching: false, response: response.profiles});
+    });
   }
 
   render() {
@@ -34,7 +38,7 @@ export default class UserSearchBox extends React.Component {
     if (this.state.response === undefined) {
       results = this.state.searching ? searching_message : search_prompt;
     } else {
-      results = this.state.response.count > 1 ? <>
+      results = this.state.response.length > 0 ? <>
         {this.state.response.map(x => <li className={"dropdown-item"}>{x.name}</li>)}
       </> : empty_results;
     }

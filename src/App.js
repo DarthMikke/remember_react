@@ -203,6 +203,18 @@ class App extends Component {
     }
   }
 
+  async userSearch(query) {
+    console.log(`Searching for user "${query}"...`);
+    let response = await this.API.get(`chores/api/users/search?query=${query}`);
+    let json = await response.json();
+    if (response.status === 200) {
+      console.log(json);
+    } else {
+      console.log(json);
+    }
+    return json;
+  }
+
   // React methods
   async componentDidMount() {
     if (this.state.token === null) {
@@ -244,15 +256,7 @@ class App extends Component {
               logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
               deleteTask={pk => this.deleteTask(pk)}
               deleteLog={pk => this.deleteLog(pk)}
-              userSearch={(query) => {
-
-                return new Promise(resolve => {
-                  setTimeout(() => {
-                    resolve([]);
-                    console.log(query);
-                  }, 500);
-                });
-              }}
+              userSearch={(query) => this.userSearch(query)}
               list={this.state.selected_list}/>
           </> }
         </div>
