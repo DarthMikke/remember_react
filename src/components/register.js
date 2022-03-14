@@ -231,6 +231,11 @@ export default class RegisterView extends Component {
             ) }
         </div>
       : null;
+    let test_message = document.location.href.split("#")[1] === "test" ?
+      <div className="alert alert-primary">Vil du prøve ut Remember?
+        Logg inn med <b>test</b> som brukarnamn og <b>test</b> som passord.
+      </div> : null;
+
     return <div className="row container-fluid gy-3 m-0">
       <div className="col-sm-6">
         <h3>Logg inn</h3>
@@ -248,6 +253,7 @@ export default class RegisterView extends Component {
             <div onClick={this.login} className="btn btn-primary">Logg inn!</div>
           </div>
         </form>
+        {test_message}
       </div>
       <div className="col-sm-6">
         <h3>Registrer ny brukar</h3>
