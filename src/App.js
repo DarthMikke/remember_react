@@ -114,62 +114,63 @@ class App extends Component {
     await this.getLists();
   }
 
-  async getChore(pk) {
-    console.log(`Getting details on chore ${pk}`);
-    let response = await this.API.get(`chores/api/chore/${pk}/`);
-    let json = await response.json();
-    if (response.status === 200) {
-      return json;
+  async getTask(pk) {
+    let json;
+    try {
+      json = await this.API.task(pk)
+    } catch (e) {
+      return {status: e.status, message: e.message};
     }
     return json;
   }
 
   async addTask(name, frequency, checklist_pk) {
     console.log(`Adding ${name} to checklist ${checklist_pk}...`);
-    let response = await this.API.post(
-      `chores/api/checklist/${checklist_pk}/add_chore`,
-      {},
-      {name: name, frequency: frequency}
-    );
-    if (response.status === 200) {
-      let newItem = await response.json();
-      console.log('Adding', newItem, 'to the local list.');
-      let newList = {
-        ...this.state.selected_list,
-        items: [...this.state.selected_list.items, newItem]
-      };
-      this.setState({selected_list: newList});
-      console.log('Added.');
+    let newItem;
+    try {
+      newItem = await this.API.addTask(name, frequency, checklist_pk);
+    } catch (e) {
+      console.log('An error has occured.');
+      return false;
     }
-    console.log('An error has occured.');
-    return response;
+
+    console.log('Adding', newItem, 'to the local list.');
+    let newList = {
+      ...this.state.selected_list,
+      items: [...this.state.selected_list.items, newItem]
+    };
+    this.setState({selected_list: newList});
+    console.log('Added.');
+    return true;
   }
 
   async updateChore(pk, name, frequency) {
     console.log(`Updating chore ${pk} to name ${name} and freq. of ${frequency} days...`);
-    let response = await this.API.post(
-      `chores/api/chore/${pk}/update`,
-      {},
-      {
-        name: name,
-        frequency: frequency
-      }
-      );
-    if (response.status === 200) {
-      await this.selectList(this.state.selected_list.id);
-      return response.json();
+    let json;
+    try {
+      json = this.API.updateTask(pk, name, frequency);
+    } catch (e) {
+      return e;
     }
+    await this.selectList(this.state.selected_list.id);
+    return json;
   }
 
-  async logChore(pk, note="", date=null) {
+  /**
+   *
+   * @param pk {number}
+   * @param note {string}
+   * @param date {Date|null}
+   * @returns {Promise<Object>}
+   */
+  async logTask(pk, note="", date=null) {
     if (date === null) {
       console.log(`Logging chore ${pk} with note ${note} now...`);
       date = new Date();
     } else {
       console.log(`Logging chore ${pk} with note ${note} at ${date.toJSON()}...`);
     }
-    let response = await this.API.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
-    return await response.json();
+    return await this.API.logTask(pk, note, date);
   }
 
   async deleteTask(pk) {
@@ -247,12 +248,13 @@ class App extends Component {
               select={(pk) => this.selectList(pk)}
               addList={(name) => this.addList(name)}/>
             <MainView
+              API={this.API}
               updateName={(name) => this.updateList(this.state.selected_list.id, name)}
               deleteList={() => this.deleteList(this.state.selected_list.id)}
               addTask={(name, frequency) => this.addTask(name, frequency, this.state.selected_list.id)}
-              getChore={(pk) => this.getChore(pk)}
+              getChore={(pk) => this.getTask(pk)}
               updateTask={(pk, name, frequency) => this.updateChore(pk, name, frequency)}
-              logChore={(pk, note, dtg) => this.logChore(pk, note, dtg)}
+              logChore={(pk, note, dtg) => this.logTask(pk, note, dtg)}
               deleteTask={pk => this.deleteTask(pk)}
               deleteLog={pk => this.deleteLog(pk)}
               userSearch={(query) => this.userSearch(query)}

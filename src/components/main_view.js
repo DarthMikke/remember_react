@@ -75,15 +75,15 @@ export default class MainView extends Component {
     let taskName = document.querySelector("#chore-input").value;
     let frequency = document.querySelector("#chore-frequency").value;
     try {
-      let response = await this.props.addTask(taskName, frequency);
-      if (response.status === 200) {
+      let success = await this.props.addTask(taskName, frequency);
+      if (success) {
         this.toggleNewTask();
         return;
       }
     } catch {
 
     }
-    this.setState({addTask: {display: true, lock: false, error: "Det oppstod ein feil. Prøv igjen."}})
+    this.setState({addTask: {display: true, lock: false, error: "Det oppstod ein feil. Prøv igjen."}});
   }
 
   toggleNewTask() {

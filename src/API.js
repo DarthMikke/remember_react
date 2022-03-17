@@ -239,4 +239,109 @@ export default class API {
   async shareChecklist(pk) {
 
   }
+
+  async addTask(name, frequency, checklist_pk) {
+    let response;
+    try {
+      response = await this.post(
+        `chores/api/checklist/${checklist_pk}/add_chore`,
+        {},
+        {name: name, frequency: frequency}
+      );
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  async task(pk) {
+    console.log(`Getting details on chore ${pk}`);
+    let response;
+    try {
+      response = await this.get(`chores/api/chore/${pk}/`);
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  /**
+   *
+   * @param pk {int}
+   * @param name {string}
+   * @param frequency {string|number}
+   * @returns {Promise<object>}
+   */
+  async updateTask(pk, name, frequency) {
+    let response;
+    try {
+      response = await this.post(
+      `chores/api/chore/${pk}/update`,
+      {},
+      {
+        name: name,
+        frequency: frequency
+      });
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  /**
+   *
+   * @param pk {number}
+   * @param note {string}
+   * @param date {Date}
+   * @returns {Promise<object>}
+   */
+  async logTask(pk, note, date) {
+    let response;
+    try {
+      response = await this.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
 }
