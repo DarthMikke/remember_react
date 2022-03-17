@@ -321,6 +321,33 @@ export default class API {
   /**
    *
    * @param pk {number}
+   * @returns {Promise<object>}
+   * @throws {APIError}
+   */
+  async deleteTask(pk) {
+    console.log(`Deleting task ${pk}...`);
+    let response;
+    try {
+      response = await this.get(`chores/api/chore/${pk}/delete`);
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  /**
+   *
+   * @param pk {number}
    * @param note {string}
    * @param date {Date}
    * @returns {Promise<object>}
@@ -329,6 +356,46 @@ export default class API {
     let response;
     try {
       response = await this.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  async deleteLog(pk) {
+    let response;
+    try {
+      response = await this.get(`chores/api/log/${pk}/delete`);
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  async userSearch(query) {
+    let response;
+    try {
+      response = await this.get(`chores/api/users/search?query=${query}`);
     } catch (e) {
       throw new APIError(500, {error: "Unknown error"});
     }

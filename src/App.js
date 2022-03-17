@@ -175,40 +175,43 @@ class App extends Component {
 
   async deleteTask(pk) {
     console.log(`Deleting task ${pk}...`);
-    let response = await this.API.get(`chores/api/chore/${pk}/delete`);
-    if (response.status === 200) {
-      console.log(`Deleting task ${pk} from the local list.`);
-      let newList = {
-        ...this.state.selected_list,
-        items: [...this.state.selected_list.items.filter(x => x.id !== pk)]
-      };
-
-      let json = await response.json();
-      this.setState({selected_list: newList});
-      console.log(`Deleted.`);
-      return json;
+    let json;
+    try {
+      json = await this.API.deleteTask(pk);
+    } catch (e) {
+      console.log(`An error occured during deleting task ${pk}.`);
+      return;
     }
-    console.log(`An error occured during deleting task ${pk}.`);
+
+    console.log(`Deleting task ${pk} from the local list.`);
+    let newList = {
+      ...this.state.selected_list,
+      items: [...this.state.selected_list.items.filter(x => x.id !== pk)]
+    };
+
+    this.setState({selected_list: newList});
+    console.log(`Deleted.`);
+    return json;
   }
   
   async deleteLog(pk) {
     console.log(`Deleting log ${pk}`);
-    let response = await this.API.get(`chores/api/log/${pk}/delete`);
-    if (response.status === 200) {
-      console.log(`Deleted.`);
-      let json = await response.json();
-      return json;
+    let json;
+    try {
+      json = await this.API.deleteLog(pk);
+    } catch (e) {
+      return;
     }
+    console.log(`Deleted.`);
+    return json;
   }
 
   async userSearch(query) {
-    console.log(`Searching for user "${query}"...`);
-    let response = await this.API.get(`chores/api/users/search?query=${query}`);
-    let json = await response.json();
-    if (response.status === 200) {
-      console.log(json);
-    } else {
-      console.log(json);
+    let json;
+    try {
+      json = await this.API.userSearch(query);
+    } catch (e) {
+      return e;
     }
     return json;
   }
