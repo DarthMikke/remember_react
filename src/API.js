@@ -216,8 +216,24 @@ export default class API {
     }
   }
 
-  async removeChecklist(pk) {
-
+  async deleteChecklist(pk) {
+    let response;
+    try {
+      response = await this.get(`chores/api/checklist/${pk}/delete`);
+    } catch (e) {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json;
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new APIError(999, {error: "Unknown error"});
+    }
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
   }
 
   async shareChecklist(pk) {

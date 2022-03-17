@@ -105,13 +105,13 @@ class App extends Component {
   }
 
   async deleteList(pk) {
-    let response = await this.API.get(`chores/api/checklist/${pk}/delete`);
-    let json = await response.json();
-    console.log(json);
-    if (response.status === 200) {
-      this.setState({selected_list: null});
-      await this.getLists();
+    try {
+      await this.API.deleteChecklist(pk)
+    } catch (e) {
+      return;
     }
+    this.setState({selected_list: null});
+    await this.getLists();
   }
 
   async getChore(pk) {
