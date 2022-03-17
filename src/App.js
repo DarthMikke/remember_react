@@ -62,48 +62,46 @@ class App extends Component {
 
   // API calls
   async getLists() {
-    if (this.state.token === null) return;
-    let response = await this.API.get('chores/api/checklists/');
-    let json = await response.json();
-    console.log(json);
-    if (response.status === 200) {
-      this.setState({lists: json['checklists']});
-      return;
-    } else if (response.status === 401) {
-      setCookie("token", "", -1);
-      setCookie("username", getCookie('username'), -1)
-    } else {
-      console.log(response.status);
+    let json;
+    try {
+      json = await this.API.checklists();
+      console.log(json);
+    } catch (e) {
+      if (e.status === 401) {
+        setCookie("token", "", -1);
+        setCookie("username", getCookie('username'), -1)
+      } else {
+        console.log(e.status);
+      }
     }
+    this.setState({lists: json['checklists']});
   }
 
   async addList(name) {
-    let response = await this.API.post('chores/api/checklist/add', {}, {'name': name});
-    let json = await response.json();
-    if (response.status === 200) {
-      this.getLists();
+    try {
+      await this.API.addChecklist(name);
+    } catch (e) {
       return;
     }
+    await this.getLists();
   }
 
   async getList(pk) {
-    let response = await this.API.get(`chores/api/checklist/${pk}/`);
-    let json = await response.json();
-    console.log(json);
-    if (response.status === 200) {
-      return json;
+    try {
+      return await this.API.checklist(pk);
+    } catch (e) {
+      console.log(e.status)
     }
-    return json;
   }
 
   async updateList(pk, name) {
-    let response = await this.API.post(`chores/api/checklist/${pk}/update`, {}, {'name': name});
-    let json = await response.json();
-    console.log(json);
-    if (response.status === 200) {
-      await this.selectList(pk);
-      await this.getLists();
+    try {
+      await this.API.updateChecklist(pk, name);
+    } catch (e) {
+      console.log(e.status, e.error);
     }
+    await this.selectList(pk);
+    await this.getLists();
   }
 
   async deleteList(pk) {
