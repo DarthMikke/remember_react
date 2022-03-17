@@ -35,9 +35,9 @@ class App extends Component {
     }
 
     this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : document.location.origin
-    this.API = null;
+    this.API = new API(this.base_url, null, token);
 
-    this.csrftoken = getCookie('csrftoken')
+    // this.csrftoken = getCookie('csrftoken') // Don't need the CSRF token anymore.
 
     this.login = this.login.bind(this);
     this.selectList = this.selectList.bind(this);
@@ -51,7 +51,6 @@ class App extends Component {
     setCookie('token', token, 30);
     this.setState({username: username, token: token});
     console.log(`Logged in as ${username}`);
-    this.API = new API(this.base_url, getCookie('csrftoken'), token);
     this.getLists();
   }
 
@@ -241,7 +240,9 @@ class App extends Component {
           ?
           <RegisterView
             base_url={this.base_url}
-            login_completion={(a, b) => this.login(a, b)}/>
+            login_completion={(a, b) => this.login(a, b)}
+            API={this.API}
+          />
           : <>
             <Sidebar
               lists={this.state.lists}

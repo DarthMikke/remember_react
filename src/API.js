@@ -1,3 +1,16 @@
+class APIError extends Error {
+  /**
+   *
+   * @param status {number|null}
+   * @param error {string}
+   */
+  constructor(status, {error}) {
+    console.log(error);
+    super(error);
+    this.status = status;
+  }
+}
+
 export default class API {
   /**
    *
@@ -5,16 +18,24 @@ export default class API {
    * Examples:
    *   - http://localhost:8000/app_name
    *   - https://public.url/api
-   * @param csrftoken {string}: Django's CSRF token
-   * @param token {string}: App's access token
+   * @param csrftoken {string|null}: Django's CSRF token
+   * @param token {string|null}: App's access token
    */
-  constructor(base_url, csrftoken, token) {
+  constructor(base_url, csrftoken=null, token=null) {
     this.base_url = base_url;
     this.csrf = csrftoken;
     this.token = token;
 
     this.get = this.get.bind(this);
     this.post = this.post.bind(this);
+  }
+
+  /**
+   * Update or set token
+   * @param token {string}
+   */
+  setToken(token) {
+    this.token = token;
   }
   
   /**
@@ -56,5 +77,71 @@ export default class API {
       headers: headers,
       body: formData,
     });
+  }
+
+  /**
+   *
+   * @param username {string}
+   * @param password {string}
+   * @throws {APIError}
+   * @returns {Promise<any>}
+   */
+  async login(username, password) {
+    let response;
+    try {
+      response = await this.post(`chores/api/login`, {}, {username: username, password: password});
+    } catch {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json = await response.json();
+    if (response.status === 200) {
+      this.setToken(json.access_token);
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  /**
+   *
+   * @param username {string}
+   * @param email {string}
+   * @param password {string}
+   * @returns {Promise<Response<any, Record<string, any>, number>>}
+   */
+  async register(username, email, password) {
+    return await this.post(`chores/api/login`, {}, {username: username, password: password});
+  }
+
+  async checklists() {
+    if (this.token === null || this.token === undefined) return;
+
+    let response;
+    try {
+      response = await this.get('chores/api/checklists/');
+    } catch {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json = await response.json();
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  async addChecklist(name) {
+    let response;
+    try {
+      response = await this.post('chores/api/checklist/add', {}, {'name': name});
+    } catch {
+      throw new Error('500', {error: "Unknown error"});
+    }
+    let json = await response.json();
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new Error(response.status, json);
+    }
   }
 }
