@@ -262,6 +262,12 @@ export default class API {
     } catch (e) { throw e; }
   }
 
+  /**
+   *
+   * @param query
+   * @returns {Promise<object>>}
+   * @throws {APIError}
+   */
   async userSearch(query) {
     try {
       return await this.request("GET",`chores/api/users/search`, {query: query});
