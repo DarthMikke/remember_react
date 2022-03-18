@@ -181,7 +181,7 @@ export default class API {
    */
   async updateChecklist(pk, name) {
     try {
-      return await this.request("REQUEST",
+      return await this.request("POST",
         `chores/api/checklist/${pk}/update`,
         {'name': name}
       );
