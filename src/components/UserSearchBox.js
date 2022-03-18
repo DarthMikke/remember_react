@@ -23,10 +23,14 @@ export default class UserSearchBox extends React.Component {
       return;
     }
     this.setState({searching: true});
-    this.props.completion(query).then((response) => {
-      console.log(response.profiles);
-      this.setState({query: query, searching: false, response: response.profiles});
-    });
+
+    try {
+      this.props.API.userSearch(query)
+        .then((json) => {
+          console.log(json);
+          this.setState({query: query, searching: false, response: json.profiles});
+        });
+    } catch (e) { console.error(e); }
   }
 
   render() {

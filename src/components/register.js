@@ -2,6 +2,10 @@ import React, {Component} from 'react';
 import getCookie from "../cookie";
 
 export default class RegisterView extends Component {
+  /**
+   *
+   * @param props {{base_url, login_completion, API}}
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -19,7 +23,9 @@ export default class RegisterView extends Component {
       register_fields_valid: [true, true, true, true],
       registered: false,
     }
-    this.csrftoken = getCookie('csrftoken');
+    // this.csrftoken = getCookie('csrftoken');
+
+    this.API = props.API;
 
     this.login=this.login.bind(this);
     this.register=this.register.bind(this);
@@ -38,27 +44,25 @@ export default class RegisterView extends Component {
   async login() {
     let username = document.querySelector("#login-username").value;
     let password = document.querySelector("#login-password").value;
-
-    let formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
   
-    let response, json;
+    let json;
     
     try {
-      response = await fetch(
-        `${this.props.base_url}/chores/api/login`,
-        {
-          method: 'post',
-          body: formData,
-          headers: {
-            'x-csrftoken': this.csrftoken
+      json = await this.API.login(username, password);
+    } catch (e) {
+      console.log(e);
+      if (e.status !== 500) {
+        this.setState(
+          {
+            login_message: {
+              display: true,
+              success: false,
+              messages: [1]
+            }
           }
-        })
-      console.log(response.headers);
-      json = await response.json();
-      console.log(json);
-    } catch {
+        );
+        return;
+      }
       this.setState(
         {
           login_message: {
@@ -68,34 +72,10 @@ export default class RegisterView extends Component {
           }
         }
       );
-    }
-
-    if (response.status === 200) {
-      this.props.login_completion(json.username, json.access_token);
       return;
     }
 
-    if (json.error !== undefined) {
-      console.log(json.error);
-      this.setState(
-        {
-          login_message: {
-            display: true,
-            success: false,
-            messages: [1]
-          }
-        }
-      );
-      return;
-    }
-
-    this.setState({
-      login_message: {
-        display: true,
-        success: false,
-        messages: [6]
-      }
-    });
+    this.props.login_completion(json.username, json.access_token);
   }
 
   async register() {
@@ -107,6 +87,9 @@ export default class RegisterView extends Component {
     let register_fields_valid = [...new Array(this.state.register_fields_valid.length).fill(true)];
     let messages = [];
 
+    /**
+     * ## Validation
+     */
     // Check if the username is empty
     if (username === "") {
       register_fields_valid[0] = false;
@@ -152,21 +135,19 @@ export default class RegisterView extends Component {
       return;
     }
 
+    /**
+     * ## Networking
+     */
     let formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
     formData.append('email', email);
 
-    let response = await fetch(
-      `${this.props.base_url}/chores/api/register`,
-      {
-        method: 'post',
-        body: formData,
-        headers: {
-          'x-csrftoken': this.csrftoken
-        }
-      }
-      );
+    let response = await this.API.post(
+      `chores/api/register`,
+      {},
+      {username: username, password: password, email: email}
+    );
     if (response.status === 200) {
       this.setState(
         {

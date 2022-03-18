@@ -75,15 +75,15 @@ export default class MainView extends Component {
     let taskName = document.querySelector("#chore-input").value;
     let frequency = document.querySelector("#chore-frequency").value;
     try {
-      let response = await this.props.addTask(taskName, frequency);
-      if (response.status === 200) {
+      let success = await this.props.addTask(taskName, frequency);
+      if (success) {
         this.toggleNewTask();
         return;
       }
     } catch {
 
     }
-    this.setState({addTask: {display: true, lock: false, error: "Det oppstod ein feil. Prøv igjen."}})
+    this.setState({addTask: {display: true, lock: false, error: "Det oppstod ein feil. Prøv igjen."}});
   }
 
   toggleNewTask() {
@@ -104,7 +104,13 @@ export default class MainView extends Component {
   }
 
   async logChore(pk, note="", dtg=null) {
-    let json = await this.props.logChore(pk, note, dtg);
+    if (dtg === null) {
+      console.log(`Logging chore ${pk} with note ${note} now...`);
+      dtg = new Date();
+    } else {
+      console.log(`Logging chore ${pk} with note ${note} at ${dtg.toJSON()}...`);
+    }
+    let json = await this.props.API.logTask(pk, note, dtg);
     let choreDetails = this.state.selectedChore === pk ? json : this.state.choreDetails;
     let extendedLogger = this.state.extendedLogger === pk ? null : this.state.extendedLogger;
     let listItemsCopy = this.state.listItems.filter(x => {
@@ -147,18 +153,26 @@ export default class MainView extends Component {
       return;
     }
 
-    let chore = await this.props.getChore(pk);
-    console.log(chore);
+    let task;
+
+    try {
+      task = await this.props.API.task(pk);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+
+    console.log(task);
     this.setState(
       {
         selectedChore: pk,
-        choreDetails: chore,
+        choreDetails: task,
       }
     );
   }
   
   async deleteLog(pk) {
-    let json = await this.props.deleteLog(pk);
+    let json = await this.props.API.deleteLog(pk);
     let listItemsCopy = this.state.listItems.filter(x => {
       if (x.id === json.id) {
         x.last_logged = json.last_logged;
@@ -247,7 +261,7 @@ export default class MainView extends Component {
             transform: "translateY(40px)"
           } : null
         }>
-         <UserSearchBox completion={(query) => this.props.userSearch(query)}/>
+         <UserSearchBox API={this.props.API}/>
         </ul>
       </div>
       <Button key={"edit-list"}
