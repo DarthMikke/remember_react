@@ -81,6 +81,32 @@ export default class API {
 
   /**
    *
+   * @param method
+   * @param path
+   * @param body
+   * @returns {Promise<any>}
+   */
+  async request(method, path, body={}) {
+    let response;
+    try {
+      if (method === "GET") {
+        response = await this.get(path, body, {});
+      } else if (method === "POST") {
+        response = await this.post(path, {}, body);
+      }
+    } catch {
+      throw new APIError(500, {error: "Unknown error"});
+    }
+    let json = await response.json();
+    if (response.status === 200) {
+      return json;
+    } else {
+      throw new APIError(response.status, json);
+    }
+  }
+
+  /**
+   *
    * @param username {string}
    * @param password {string}
    * @throws {APIError}
@@ -120,18 +146,9 @@ export default class API {
   async checklists() {
     if (this.token === null || this.token === undefined) return;
 
-    let response;
     try {
-      response = await this.get('chores/api/checklists/');
-    } catch {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json = await response.json();
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("GET", 'chores/api/checklists/', {});
+    } catch (e) { throw e; }
   }
 
   /**
@@ -140,25 +157,9 @@ export default class API {
    * @returns {Promise<object>}
    */
   async addChecklist(name) {
-    let response;
     try {
-      response = await this.post('chores/api/checklist/add', {}, {'name': name});
-    } catch {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-
-    let json;
-    try {
-      json = await response.json();
-    } catch {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("POST", 'chores/api/checklist/add', {'name': name});
+    } catch (e) { throw e; }
   }
 
   /**
@@ -167,23 +168,9 @@ export default class API {
    * @returns {Promise<object>} the Checklist object.
    */
   async checklist(pk) {
-    let response;
     try {
-      response = await this.get(`chores/api/checklist/${pk}`);
-    } catch {
-      throw new Error(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("GET", `chores/api/checklist/${pk}`);
+    } catch (e) { throw e; }
   }
 
   /**
@@ -193,47 +180,18 @@ export default class API {
    * @returns {Promise<object>}
    */
   async updateChecklist(pk, name) {
-    let response;
     try {
-      response = await this.post(
+      return await this.request("REQUEST",
         `chores/api/checklist/${pk}/update`,
-        {},
         {'name': name}
       );
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+    } catch (e) { throw e; }
   }
 
   async deleteChecklist(pk) {
-    let response;
     try {
-      response = await this.get(`chores/api/checklist/${pk}/delete`);
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("GET",`chores/api/checklist/${pk}/delete`);
+    } catch (e) { throw e; }
   }
 
   async shareChecklist(pk) {
@@ -241,48 +199,18 @@ export default class API {
   }
 
   async addTask(name, frequency, checklist_pk) {
-    let response;
     try {
-      response = await this.post(
+      return await this.request("POST",
         `chores/api/checklist/${checklist_pk}/add_chore`,
-        {},
         {name: name, frequency: frequency}
       );
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+    } catch (e) { throw e; }
   }
 
   async task(pk) {
-    console.log(`Getting details on chore ${pk}`);
-    let response;
     try {
-      response = await this.get(`chores/api/chore/${pk}/`);
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("GET",`chores/api/chore/${pk}/`);
+    } catch (e) { throw e; }
   }
 
   /**
@@ -293,29 +221,14 @@ export default class API {
    * @returns {Promise<object>}
    */
   async updateTask(pk, name, frequency) {
-    let response;
     try {
-      response = await this.post(
+      return await this.request("POST",
       `chores/api/chore/${pk}/update`,
-      {},
       {
         name: name,
         frequency: frequency
       });
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+    } catch (e) { throw e; }
   }
 
   /**
@@ -325,24 +238,9 @@ export default class API {
    * @throws {APIError}
    */
   async deleteTask(pk) {
-    console.log(`Deleting task ${pk}...`);
-    let response;
     try {
-      response = await this.get(`chores/api/chore/${pk}/delete`);
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.get(`chores/api/chore/${pk}/delete`);
+    } catch (e) { throw e; }
   }
 
   /**
@@ -353,62 +251,20 @@ export default class API {
    * @returns {Promise<object>}
    */
   async logTask(pk, note, date) {
-    let response;
     try {
-      response = await this.get(`chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("GET", `chores/api/chore/${pk}/log`, {note: note, date: date.toJSON()});
+    } catch (e) { throw e; }
   }
 
   async deleteLog(pk) {
-    let response;
     try {
-      response = await this.get(`chores/api/log/${pk}/delete`);
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.request("GET", `chores/api/log/${pk}/delete`);
+    } catch (e) { throw e; }
   }
 
   async userSearch(query) {
-    let response;
     try {
-      response = await this.get(`chores/api/users/search?query=${query}`);
-    } catch (e) {
-      throw new APIError(500, {error: "Unknown error"});
-    }
-    let json;
-    try {
-      json = await response.json();
-    } catch (e) {
-      throw new APIError(999, {error: "Unknown error"});
-    }
-    if (response.status === 200) {
-      return json;
-    } else {
-      throw new APIError(response.status, json);
-    }
+      return await this.get(`chores/api/users/search?query=${query}`);
+    } catch (e) { throw e; }
   }
 }
