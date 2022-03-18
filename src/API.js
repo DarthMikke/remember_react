@@ -284,4 +284,9 @@ export default class API {
       return await this.request("GET",`chores/api/users/search`, {query: query});
     } catch (e) { throw e; }
   }
+
+  async me() {
+    try { return await this.request("GET", "chores/api/users/me") }
+    catch (e) { throw e; }
+  }
 }
