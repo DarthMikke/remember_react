@@ -43,7 +43,6 @@ class App extends Component {
     this.selectList = this.selectList.bind(this);
     this.getLists = this.getLists.bind(this);
     this.addList = this.addList.bind(this);
-    this.getList = this.getList.bind(this);
   }
 
   login(username, token) {
@@ -55,7 +54,12 @@ class App extends Component {
   }
 
   async selectList(pk) {
-    let checklist = await this.getList(pk);
+    let checklist;
+
+    try {
+      checklist = await this.API.checklist(pk);
+    } catch (e) { console.error(e); return; }
+
     console.log(checklist);
     this.setState({ selected_list: checklist });
   }
@@ -71,7 +75,7 @@ class App extends Component {
         setCookie("token", "", -1);
         setCookie("username", getCookie('username'), -1)
       } else {
-        console.log(e.status);
+        console.error(e);
       }
     }
     this.setState({lists: json['checklists']});
@@ -86,20 +90,10 @@ class App extends Component {
     await this.getLists();
   }
 
-  async getList(pk) {
-    try {
-      return await this.API.checklist(pk);
-    } catch (e) {
-      console.log(e.status)
-    }
-  }
-
   async updateList(pk, name) {
     try {
       await this.API.updateChecklist(pk, name);
-    } catch (e) {
-      console.log(e.status, e.error);
-    }
+    } catch (e) { console.error(e); }
     await this.selectList(pk);
     await this.getLists();
   }
@@ -112,16 +106,6 @@ class App extends Component {
     }
     this.setState({selected_list: null});
     await this.getLists();
-  }
-
-  async getTask(pk) {
-    let json;
-    try {
-      json = await this.API.task(pk)
-    } catch (e) {
-      return {status: e.status, message: e.message};
-    }
-    return json;
   }
 
   async addTask(name, frequency, checklist_pk) {
@@ -156,23 +140,6 @@ class App extends Component {
     return json;
   }
 
-  /**
-   *
-   * @param pk {number}
-   * @param note {string}
-   * @param date {Date|null}
-   * @returns {Promise<Object>}
-   */
-  async logTask(pk, note="", date=null) {
-    if (date === null) {
-      console.log(`Logging chore ${pk} with note ${note} now...`);
-      date = new Date();
-    } else {
-      console.log(`Logging chore ${pk} with note ${note} at ${date.toJSON()}...`);
-    }
-    return await this.API.logTask(pk, note, date);
-  }
-
   async deleteTask(pk) {
     console.log(`Deleting task ${pk}...`);
     let json;
@@ -193,28 +160,6 @@ class App extends Component {
     console.log(`Deleted.`);
     return json;
   }
-  
-  async deleteLog(pk) {
-    console.log(`Deleting log ${pk}`);
-    let json;
-    try {
-      json = await this.API.deleteLog(pk);
-    } catch (e) {
-      return;
-    }
-    console.log(`Deleted.`);
-    return json;
-  }
-
-  async userSearch(query) {
-    let json;
-    try {
-      json = await this.API.userSearch(query);
-    } catch (e) {
-      return e;
-    }
-    return json;
-  }
 
   // React methods
   async componentDidMount() {
@@ -225,9 +170,6 @@ class App extends Component {
   }
 
   render() {
-    let main_view_list = this.state.selected_list === null
-      ? null
-      : this.state.lists.filter(x => x.id === this.state.selected_list_id)[0];
     return <>
         <Navbar
           username={this.state.username}
@@ -255,12 +197,8 @@ class App extends Component {
               updateName={(name) => this.updateList(this.state.selected_list.id, name)}
               deleteList={() => this.deleteList(this.state.selected_list.id)}
               addTask={(name, frequency) => this.addTask(name, frequency, this.state.selected_list.id)}
-              getChore={(pk) => this.getTask(pk)}
               updateTask={(pk, name, frequency) => this.updateChore(pk, name, frequency)}
-              logChore={(pk, note, dtg) => this.logTask(pk, note, dtg)}
               deleteTask={pk => this.deleteTask(pk)}
-              deleteLog={pk => this.deleteLog(pk)}
-              userSearch={(query) => this.userSearch(query)}
               list={this.state.selected_list}/>
           </> }
         </div>

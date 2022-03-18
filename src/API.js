@@ -264,7 +264,7 @@ export default class API {
 
   async userSearch(query) {
     try {
-      return await this.get(`chores/api/users/search?query=${query}`);
+      return await this.request("GET",`chores/api/users/search`, {query: query});
     } catch (e) { throw e; }
   }
 }
