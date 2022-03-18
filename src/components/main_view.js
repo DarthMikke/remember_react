@@ -19,8 +19,8 @@ export default class MainView extends Component {
   constructor(props) {
     super(props);
     
-    let listItems = props.list === null ? [] : props.list.items
-    let sharedWith = props.list === null ? [] : props.list.shared_with
+    let listItems = props.list === null ? [] : props.list.items;
+    let sharedWith = props.list === null ? [] : props.list.shared_with;
     
     this.state = {
       editName: false,
@@ -308,31 +308,35 @@ export default class MainView extends Component {
               completion={() => this.toggleNewTask()}
               classNames={"btn-primary"}
       />
-      <div className={"btn-group"}>
-        <Button key={"share-list"}
-                icon={"box-arrow-up"} caption={"Del"}
-                completion={() => this.toggleSharing()}
-                classNames={"btn-primary rounded"}
+      { this.props.list.owner.id === this.props.profile.id
+      && <>
+        <div className={"btn-group"}>
+          <Button key={"share-list"}
+                  icon={"box-arrow-up"} caption={"Del"}
+                  completion={() => this.toggleSharing()}
+                  classNames={"btn-primary rounded"}
+          />
+          <Dropdown visible={this.state.sharing.display}>
+            <UserSearchBox API={this.props.API} completion={this.shareList}
+                           sharedWith={this.state.sharedWith}/>
+          </Dropdown>
+        </div>
+        <Button key={"edit-list"}
+        icon={"pencil"} caption={"Rediger"}
+        completion={() => {
+        this.toggleEditing()
+      }}
+        classNames={"btn-primary"}
         />
-        <Dropdown visible={this.state.sharing.display}>
-          <UserSearchBox API={this.props.API} completion={this.shareList}
-                         sharedWith={this.state.sharedWith}/>
-        </Dropdown>
-      </div>
-      <Button key={"edit-list"}
-              icon={"pencil"} caption={"Rediger"}
-              completion={() => {
-                this.toggleEditing()
-              }}
-              classNames={"btn-primary"}
-      />
-      <Button key={"delete-list"}
-              icon={"trash3"} caption={"Slett lista"}
-              completion={() => {
-                this.props.deleteList()
-              }}
-              classNames={"btn-danger"}
-      />
+        <Button key={"delete-list"}
+        icon={"trash3"} caption={"Slett lista"}
+        completion={() => {
+        this.props.deleteList()
+      }}
+        classNames={"btn-danger"}
+        />
+        </>
+      }
       <div className={"d-grid g-2"}>
         {this.state.addTask.display
           ? <NewTask state={this.state.addTask} completion={() => this.addTask()}/>

@@ -32,6 +32,7 @@ class App extends Component {
        * @param {object|null}
        */
       selected_list: null,
+      profile: {},
     }
 
     this.base_url = window.location.hostname === "localhost" ? "http://localhost:8000" : document.location.origin
@@ -45,12 +46,13 @@ class App extends Component {
     this.addList = this.addList.bind(this);
   }
 
-  login(username, token) {
+  async login(username, token) {
     setCookie('username', username, 30);
     setCookie('token', token, 30);
-    this.setState({username: username, token: token});
+    let profile = await this.API.me();
+    this.setState({username: username, token: token, profile: profile});
     console.log(`Logged in as ${username}`);
-    this.getLists();
+    await this.getLists();
   }
 
   async selectList(pk) {
@@ -199,6 +201,7 @@ class App extends Component {
               addTask={(name, frequency) => this.addTask(name, frequency, this.state.selected_list.id)}
               updateTask={(pk, name, frequency) => this.updateChore(pk, name, frequency)}
               deleteTask={pk => this.deleteTask(pk)}
+              profile={this.state.profile}
               list={this.state.selected_list}/>
           </> }
         </div>
