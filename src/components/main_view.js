@@ -7,12 +7,20 @@ import NewTask from "./NewTask";
 import TextFieldForm from "./TextFieldForm";
 import ExtendedLogger from "./ExtendedLogger";
 import UserSearchBox from "./UserSearchBox";
+import Dropdown from "./Dropdown";
+import * as PropTypes from "prop-types";
 
 export default class MainView extends Component {
+  propTypes = {
+    API: PropTypes.object,
+    list: PropTypes.object,
+  }
+
   constructor(props) {
     super(props);
     
     let listItems = props.list === null ? [] : props.list.items
+    let sharedWith = props.list === null ? [] : props.list.shared_with
     
     this.state = {
       editName: false,
@@ -36,6 +44,7 @@ export default class MainView extends Component {
        * @params {[object]}
        */
       listItems: listItems,
+      sharedWith: sharedWith,
       editingTask: null,
     };
 
@@ -47,6 +56,8 @@ export default class MainView extends Component {
     this.choreDetails = this.choreDetails.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
     this.updateName = this.updateName.bind(this);
+    this.shareList = this.shareList.bind(this);
+    this.unshareList = this.unshareList.bind(this);
   }
 
   // List actions
@@ -56,7 +67,21 @@ export default class MainView extends Component {
     this.setState({sharing: newObject});
   }
 
-  async shareList() {
+  async shareList(pk) {
+    console.log(this.state.sharedWith);
+    if (this.state.sharedWith.findIndex(x => x.id === pk) > -1) {
+      console.log(`Already shared with user ${pk}`);
+      return;
+    }
+    console.log(`Sharing with user ${pk}`);
+    try {
+      await this.props.API.shareChecklist(this.props.list.id, pk);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async unshareList(pk) {
 
   }
 
@@ -191,13 +216,24 @@ export default class MainView extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(this.props.list);
     let listItems = [];
+    let sharedWith = [];
     if (this.props.list !== null) {
       if (this.props.list.items !== undefined) {
         if (prevProps.list === null || prevProps.list.items !== this.props.list.items) {
           listItems = this.props.list.items.map(x => x);
-          this.setState({listItems: listItems});
         }
       }
+      if (this.props.list.shared_with !== undefined) {
+        if (prevProps.list === null || prevProps.list.shared_with !== this.props.list.shared_with) {
+          sharedWith = this.props.list.shared_with.map(x => x);
+        }
+      }
+    }
+    if (listItems.length > 0 || sharedWith.length > 0) {
+      this.setState({
+        listItems: listItems,
+        sharedWith: sharedWith,
+      })
     }
   }
 
@@ -205,6 +241,8 @@ export default class MainView extends Component {
     if (this.props.list === null) {
       return <div className="col-md-9 col-lg-10">Du har ikkje valt noka liste</div>;
     }
+
+    console.log(this.state.listItems);
     
     let table = this.state.listItems.length === 0
       ? <span>Her er det ingen oppgåver. Prøv å leggje til ei.</span>
@@ -236,14 +274,28 @@ export default class MainView extends Component {
           {extendedLogger}
           {details}
         </>
-        })
+        });
 
     return <div className="col-md-9 col-lg-10">
-      { !this.state.editName
-        ? <h3>{ this.props.list.name }</h3>
-        : <TextFieldForm value={this.props.list.name} completion={(name) => {this.updateName(name)}}
-                         id={"list-name"} caption={"Lagre"}
-          /> }
+      <div className={"row"}>
+        <div className={"col"}>
+        { !this.state.editName
+          ? <h3>{this.props.list.name}</h3>
+          : <TextFieldForm value={this.props.list.name}
+                           completion={(name) => {this.updateName(name)}}
+                           id={"list-name"} caption={"Lagre"}
+            />
+        }
+        </div>
+        <div className={"col text-end"}>
+          <span className={"text-muted"}>{
+            this.state.sharedWith.length > 0
+              ? `Delt med ${this.state.sharedWith.length}`
+              : "Ikkje delt med nokon"
+          }</span>
+        </div>
+      </div>
+
       <Button key={"new-chore"}
               icon={"plus-circle"} caption={"Ny oppgåve"}
               completion={() => this.toggleNewTask()}
@@ -255,30 +307,30 @@ export default class MainView extends Component {
                 completion={() => this.toggleSharing()}
                 classNames={"btn-primary rounded"}
         />
-        <ul className={"dropdown-menu"} style={this.state.sharing.display ?
-          {
-            display: "block",
-            transform: "translateY(40px)"
-          } : null
-        }>
-         <UserSearchBox API={this.props.API}/>
-        </ul>
+        <Dropdown visible={this.state.sharing.display}>
+          <UserSearchBox API={this.props.API} completion={this.shareList}
+                         sharedWith={this.state.sharedWith}/>
+        </Dropdown>
       </div>
       <Button key={"edit-list"}
               icon={"pencil"} caption={"Rediger"}
-              completion={() => {this.toggleEditing()}}
+              completion={() => {
+                this.toggleEditing()
+              }}
               classNames={"btn-primary"}
       />
       <Button key={"delete-list"}
               icon={"trash3"} caption={"Slett lista"}
-              completion={() => {this.props.deleteList()}}
+              completion={() => {
+                this.props.deleteList()
+              }}
               classNames={"btn-danger"}
       />
       <div className={"d-grid g-2"}>
-      { this.state.addTask.display
-        ? <NewTask state={this.state.addTask} completion={() => this.addTask()}/>
-        : null }
-      { table }
+        {this.state.addTask.display
+          ? <NewTask state={this.state.addTask} completion={() => this.addTask()}/>
+          : null}
+        {table}
       </div>
     </div>;
   }

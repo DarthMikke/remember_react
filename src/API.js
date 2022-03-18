@@ -194,8 +194,9 @@ export default class API {
     } catch (e) { throw e; }
   }
 
-  async shareChecklist(pk) {
 
+   */
+  async shareChecklist(pk, user_pk) {
   }
 
   async addTask(name, frequency, checklist_pk) {
