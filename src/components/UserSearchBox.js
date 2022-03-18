@@ -37,12 +37,12 @@ export default class UserSearchBox extends React.Component {
 
   /**
    *
-   * @param pk {number} PK of the user to share the list with.
+   * @param profile {object} Profile of the user to share the list with.
    */
-  shareWith(pk) {
-    this.props.completion(pk);
-    if (this.state.sharedWith.findIndex(x => x === pk) === -1) {
-      this.setState({sharedWith: [...this.state.sharedWith, pk]})
+  shareWith(profile) {
+    this.props.completion(profile);
+    if (this.state.sharedWith.findIndex(x => x === profile.id) === -1) {
+      this.setState({sharedWith: [...this.state.sharedWith, profile.id]})
     }
   }
 
@@ -59,7 +59,7 @@ export default class UserSearchBox extends React.Component {
         {this.state.response.map(x => <li className={"dropdown-item"}>
           <div className="row">
             <div className="col">
-              <a href={"#"} onClick={() => this.shareWith(x.id)}>
+              <a href={"#"} onClick={() => this.shareWith(x)}>
                 {x.name}
               </a>
             </div>

@@ -67,18 +67,25 @@ export default class MainView extends Component {
     this.setState({sharing: newObject});
   }
 
-  async shareList(pk) {
+  /**
+   *
+   * @param profile {object}
+   * @returns {Promise<void>}
+   */
+  async shareList(profile) {
     console.log(this.state.sharedWith);
-    if (this.state.sharedWith.findIndex(x => x.id === pk) > -1) {
-      console.log(`Already shared with user ${pk}`);
+    if (this.state.sharedWith.findIndex(x => x.id === profile.id) > -1) {
+      console.log(`Already shared with user ${profile.id}`);
       return;
     }
-    console.log(`Sharing with user ${pk}`);
+    console.log(`Sharing with user ${profile.id}`);
     try {
-      await this.props.API.shareChecklist(this.props.list.id, pk);
+      await this.props.API.shareChecklist(this.props.list.id, profile.id);
     } catch (e) {
       console.error(e);
+      return;
     }
+    this.setState({sharedWith: [...this.state.sharedWith, profile]})
   }
 
   async unshareList(pk) {

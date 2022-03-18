@@ -194,9 +194,19 @@ export default class API {
     } catch (e) { throw e; }
   }
 
-
+  /**
+   *
+   * @param pk {number} checklist PK
+   * @param user_pk {number} user PK
+   * @returns {Promise<void>}
    */
   async shareChecklist(pk, user_pk) {
+    try {
+      return await this.request("POST",
+        `chores/api/checklist/${pk}/share`,
+        {profile: user_pk}
+      );
+    } catch (e) { throw e; }
   }
 
   async addTask(name, frequency, checklist_pk) {
