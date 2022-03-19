@@ -34,6 +34,7 @@ export default class MainView extends Component {
         lock: false,
         error: false,
       },
+      showSharedWith: false,
       selectedChore: null,
       choreDetails: {logs: []},
       /**
@@ -58,6 +59,8 @@ export default class MainView extends Component {
     this.updateName = this.updateName.bind(this);
     this.shareList = this.shareList.bind(this);
     this.unshareList = this.unshareList.bind(this);
+    this.toggleSharing = this.toggleSharing.bind(this);
+    this.toggleSharedWith = this.toggleSharedWith.bind(this);
   }
 
   // List actions
@@ -65,6 +68,10 @@ export default class MainView extends Component {
     let newObject = {...this.state.sharing, display: !this.state.sharing.display};
     console.log("Display sharing window:", newObject.display);
     this.setState({sharing: newObject});
+  }
+
+  toggleSharedWith() {
+    this.setState({showSharedWith: !this.state.showSharedWith});
   }
 
   /**
@@ -295,11 +302,22 @@ export default class MainView extends Component {
         }
         </div>
         <div className={"col text-end"}>
-          <span className={"text-muted"}>{
-            this.state.sharedWith.length > 0
-              ? `Delt med ${this.state.sharedWith.length}`
-              : "Ikkje delt med nokon"
-          }</span>
+          <div className="btn-group">
+            <div className={"btn text-muted" + (this.state.sharedWith.length > 0 ? " dropdown-toggle" : "")}
+                 onClick={this.toggleSharedWith}
+            >
+              {
+              this.state.sharedWith.length > 0
+                ? `Delt med ${this.state.sharedWith.length}`
+                : "Ikkje delt med nokon"
+            }
+            </div>
+            <Dropdown visible={this.state.showSharedWith}>
+              {
+                this.state.sharedWith.map(x => <li>{x.name}</li>)
+              }
+            </Dropdown>
+          </div>
         </div>
       </div>
 
