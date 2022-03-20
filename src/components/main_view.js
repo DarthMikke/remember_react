@@ -312,9 +312,20 @@ export default class MainView extends Component {
                 : "Ikkje delt med nokon"
             }
             </div>
-            <Dropdown visible={this.state.showSharedWith}>
+            <Dropdown visible={this.state.showSharedWith} xOffset={-34}>
               {
-                this.state.sharedWith.map(x => <li>{x.name}</li>)
+                this.state.sharedWith.map(x => <li className={"dropdown-item"}>
+                  <div className={"row"}>
+                    <div className={"col"}>{x.name}</div>
+                    { ((this.props.profile.id === x.id) ||
+                        (this.props.profile.id === this.props.list.owner.id)) &&
+                    <div className={"col text-end"}>
+                      <i className={"bi bi-trash3"}
+                         onClick={() => {}}
+                      />
+                    </div> }
+                  </div>
+                </li>)
               }
             </Dropdown>
           </div>
