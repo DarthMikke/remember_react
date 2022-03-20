@@ -1,13 +1,14 @@
 import * as PropTypes from "prop-types";
 
-export default function Dropdown(props) {
-  return props.visible ? <ul className={"dropdown-menu"} style=
+export default function Dropdown({children, xOffset, visible}) {
+  xOffset = xOffset === undefined ? 0 : `${xOffset}px`;
+  return visible ? <ul className={"dropdown-menu"} style=
     {{
       display: "block",
-      transform: "translateY(40px)"
+      transform: `translate3D(${xOffset}, 40px, 0)`
     }}
   >
-    {props.children}
+    {children}
   </ul> : <></>;
 }
 
