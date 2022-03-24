@@ -96,7 +96,13 @@ export default class MainView extends Component {
   }
 
   async unshareList(pk) {
-
+    try {
+      await this.props.API.unshareChecklist(this.props.list.id, pk);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+    this.setState({sharedWith: this.state.sharedWith.filter(profile => profile.id !== pk)})
   }
 
   toggleEditing() {
@@ -314,14 +320,14 @@ export default class MainView extends Component {
             </div>
             <Dropdown visible={this.state.showSharedWith} xOffset={-34}>
               {
-                this.state.sharedWith.map(x => <li className={"dropdown-item"}>
+                this.state.sharedWith.map(profile => <li className={"dropdown-item"}>
                   <div className={"row"}>
-                    <div className={"col"}>{x.name}</div>
-                    { ((this.props.profile.id === x.id) ||
+                    <div className={"col"}>{profile.name}</div>
+                    { ((this.props.profile.id === profile.id) ||
                         (this.props.profile.id === this.props.list.owner.id)) &&
                     <div className={"col text-end"}>
                       <i className={"bi bi-trash3"}
-                         onClick={() => {}}
+                         onClick={() => {this.unshareList(profile.id)}}
                       />
                     </div> }
                   </div>
