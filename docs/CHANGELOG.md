@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+[Unreleased]
+-----------------
+### Added
+- Sharing lists with other users.
+- Search for users to share lists with.
+- Unshare lists.
+
 [v 2022.1a6] - 2022-03-14
 -----------------
 ### Added
